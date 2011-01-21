@@ -1,0 +1,105 @@
+<?php
+// $Id $
+
+/**
+ * @file
+ * For using real names during registration/
+ *
+ * The realname_registration allows usernames to be generated based upon
+ * required first name and last name CCK fields on the registration form.
+ */
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function realname_registration_form_alter(&$form, $form_state, $form_id) {
+  if (!($form_id == 'user_register_form')) {
+    return;
+  }
+  if (isset($form['account']) && is_array($form['account'])) {
+    $form['account']['name']['#type'] = 'hidden';
+    $form['account']['name']['#value'] = 'unset_username';
+    
+    $form['account']['firstname'] = array(
+    '#description' => t('Please enter your first name, this field must only contain letters.'),
+    '#maxlength' => 60,
+    '#type' => 'textfield',
+    '#title' => t('First name'),
+    '#weight' => -500,
+    '#required' => TRUE
+    );
+    
+    $form['account']['lastname'] = array(
+    '#description' => t('Please enter your last name, this field must only contain letters.'),
+    '#maxlength' => 60,
+    '#type' => 'textfield',
+    '#title' => t('Last name'),
+    '#weight' => -499,
+    '#required' => TRUE
+    );
+  }
+  else {
+    $form['name']['#type'] = 'hidden';
+    $form['name']['#value'] = 'unset_username';
+    $form['firstname'] = array(
+    '#description' => 'Please enter your first name, this field must only contain letters.',
+    '#maxlength' => 60,
+    '#type' => 'textfield',
+    '#title' => t('First name'),
+    '#weight' => -500,
+    '#required' => TRUE
+    );
+    $form['lastname'] = array(
+    '#description' => 'Please enter your last name, this field must only contain letters.',
+    '#maxlength' => 60,
+    '#type' => 'textfield',
+    '#title' => t('Last name'),
+    '#weight' => -499,
+    '#required' => TRUE
+    );
+  }
+  $form['#validate'][] = 'realname_registration_validate';
+}
+
+/**
+ * Implementation of hook_user_presave().
+ */
+function realname_registration_user_presave(&$edit, $account, $category) {
+  if ($edit['name'] == 'unset_username') {
+    // Generate the username based on first name and last name fields.
+    $first_init = drupal_substr($edit['firstname'], 0, 1);
+    $lastname = $edit['lastname'];
+    $username = strtolower($first_init . $lastname);
+
+    // Check if the username already exists in the database.
+    $result = db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username));
+    // While the username is taken, append a number and increment it until our username is unique.
+    while ($result->rowCount()) {
+      static $i = 0;
+      $result = db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username . ++$i));
+      if (!($result->rowCount())) {
+        $username = $username . $i;
+      }
+    }
+    $edit['name'] = $username;
+  }
+}
+
+/**
+ * Form validation handler for user_register_form().
+ *
+ * @see user_register_form()
+ * @see user_register_submit()
+ */
+
+
+function realname_registration_validate($form, &$form_state) {
+  // A first name must be letters only.
+  if (!preg_match("/^[A-Za-z]+$/", $form_state['values']['firstname'])) {
+    form_set_error('firstname', t('Last name must only contain letters'));
+  }
+  // A last name must be letters only.
+  if (!preg_match("/^[A-Za-z]+$/", $form_state['values']['lastname'])) {
+    form_set_error('lastname', t('Last name must only contain letters'));
+  }
+}
