@@ -75,8 +75,8 @@ function realname_registration_user_presave(&$edit, $account, $category) {
       // Check if the username already exists in the database.
       $result = db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username));
       // While the username is taken, append a number and increment it until our username is unique.
+      $i = 0;
       while ($result->rowCount()) {
-        static $i = 0;
         $result = db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username . ++$i));
         if (!($result->rowCount())) {
           $username = $username . $i;
