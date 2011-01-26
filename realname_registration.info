@@ -1,4 +1,4 @@
 ; $Id$
 name = Realname Registration 
 description = "For registration process using first initial and last name as username."
-core = 7.x
+core = 6.x

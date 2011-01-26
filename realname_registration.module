@@ -13,7 +13,7 @@
  * Implementation of hook_form_alter().
  */
 function realname_registration_form_alter(&$form, $form_state, $form_id) {
-  if (!($form_id == 'user_register_form')) {
+  if (!($form_id == 'user_register')) {
     return;
   }
   if (isset($form['account']) && is_array($form['account'])) {
@@ -42,7 +42,7 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
     $form['name']['#type'] = 'hidden';
     $form['name']['#value'] = 'unset_username';
     $form['firstname'] = array(
-    '#description' => 'Please enter your first name, this field must only contain letters.',
+    '#description' => t('Please enter your first name, this field must only contain letters.'),
     '#maxlength' => 60,
     '#type' => 'textfield',
     '#title' => t('First name'),
@@ -50,7 +50,7 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
     '#required' => TRUE
     );
     $form['lastname'] = array(
-    '#description' => 'Please enter your last name, this field must only contain letters.',
+    '#description' => t('Please enter your last name, this field must only contain letters.'),
     '#maxlength' => 60,
     '#type' => 'textfield',
     '#title' => t('Last name'),
@@ -62,30 +62,25 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
- * Implementation of hook_user_presave().
+ * Implementation of hook_user().
  */
-function realname_registration_user_presave(&$edit, $account, $category) {
-  if(isset($edit['name'])) {
-    if ($edit['name'] == 'unset_username') {
-      // Generate the username based on first name and last name fields.
-      $first_init = drupal_substr($edit['firstname'], 0, 1);
-      $lastname = $edit['lastname'];
-      $username = strtolower($first_init . $lastname);
+function realname_registration_user($op, &$edit, &$account, $category = NULL) {
+  if ($op == 'validate') {
+    // Generate the username based on first name and last name fields.
+    $first_init = drupal_substr($edit['firstname'], 0, 1);
+    $lastname = $edit['lastname'];
+    $username = strtolower($first_init . $lastname);
+    $orig = $username;
+    $i = 0;
 
-      // Check if the username already exists in the database.
-      $result = db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username));
-      // While the username is taken, append a number and increment it until our username is unique.
-      while ($result->rowCount()) {
-        static $i = 0;
-        $result = db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username . ++$i));
-        if (!($result->rowCount())) {
-          $username = $username . $i;
-        }
-      }
-      $edit['name'] = $username;
+    // Check if the username already exists in the database.
+    while (db_result(db_query("SELECT COUNT(*) FROM {users} WHERE name = '%s';", $username))) {
+      $username = $orig . ++$i;
     }
+    $edit['name'] = $username;
   }
 }
+
 
 /**
  * Form validation handler for user_register_form().
