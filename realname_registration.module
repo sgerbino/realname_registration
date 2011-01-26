@@ -66,18 +66,22 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
  */
 function realname_registration_user($op, &$edit, &$account, $category = NULL) {
   if ($op == 'validate') {
-    // Generate the username based on first name and last name fields.
-    $first_init = drupal_substr($edit['firstname'], 0, 1);
-    $lastname = $edit['lastname'];
-    $username = strtolower($first_init . $lastname);
-    $original_username = $username;
-    $i = 0;
+    if(isset($edit['name'])) {
+      if($edit['name'] == 'unset_username') {
+        // Generate the username based on first name and last name fields.
+        $first_init = drupal_substr($edit['firstname'], 0, 1);
+        $lastname = $edit['lastname'];
+        $username = strtolower($first_init . $lastname);
+        $orig = $username;
+        $i = 0;
 
-    // Check if the username already exists in the database.
-    while (db_result(db_query("SELECT COUNT(*) FROM {users} WHERE name = '%s';", $username))) {
-      $username = $original_username . ++$i;
+        // Check if the username already exists in the database.
+        while (db_result(db_query("SELECT COUNT(*) FROM {users} WHERE name = '%s';", $username))) {
+          $username = $orig . ++$i;
+        }
+        $edit['name'] = $username;
+      }
     }
-    $edit['name'] = $username;
   }
 }
 
