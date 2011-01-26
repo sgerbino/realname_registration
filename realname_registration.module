@@ -71,16 +71,12 @@ function realname_registration_user_presave(&$edit, $account, $category) {
       $first_init = drupal_substr($edit['firstname'], 0, 1);
       $lastname = $edit['lastname'];
       $username = strtolower($first_init . $lastname);
+      $original_username = $username;
+      $i = 0;
 
-      // Check if the username already exists in the database.
-      $result = db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username));
       // While the username is taken, append a number and increment it until our username is unique.
-      while ($result->rowCount()) {
-        static $i = 0;
-        $result = db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username . ++$i));
-        if (!($result->rowCount())) {
-          $username = $username . $i;
-        }
+      while (db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username))) {
+        $username = $original_username . ++$i;
       }
       $edit['name'] = $username;
     }
