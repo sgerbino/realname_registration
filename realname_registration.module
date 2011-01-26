@@ -98,11 +98,11 @@ function realname_registration_user_presave(&$edit, $account, $category) {
 
 function realname_registration_validate($form, &$form_state) {
   // A first name must be letters only.
-  if (!preg_match("/^[A-Za-z]+$/", $form_state['values']['firstname'])) {
+  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values']['firstname'])) {
     form_set_error('firstname', t('First name must only contain letters'));
   }
   // A last name must be letters only.
-  if (!preg_match("/^[A-Za-z]+$/", $form_state['values']['lastname'])) {
+  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values']['lastname'])) {
     form_set_error('lastname', t('Last name must only contain letters'));
   }
 }
