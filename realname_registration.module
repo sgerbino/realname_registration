@@ -70,12 +70,12 @@ function realname_registration_user($op, &$edit, &$account, $category = NULL) {
     $first_init = drupal_substr($edit['firstname'], 0, 1);
     $lastname = $edit['lastname'];
     $username = strtolower($first_init . $lastname);
-    $orig = $username;
+    $original_username = $username;
     $i = 0;
 
     // Check if the username already exists in the database.
     while (db_result(db_query("SELECT COUNT(*) FROM {users} WHERE name = '%s';", $username))) {
-      $username = $orig . ++$i;
+      $username = $original_username . ++$i;
     }
     $edit['name'] = $username;
   }
