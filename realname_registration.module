@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * For using real names during registration/
@@ -7,6 +6,15 @@
  * The realname_registration allows usernames to be generated based upon
  * required first name and last name CCK fields on the registration form.
  */
+
+/**
+ * Implement hook_help().
+ */
+function realname_registration_help($path, $arg) {
+  if ($path == 'admin/help#realname_registration') {
+  return t('Force usernames based on firstname and lastname fields on the registration page.');
+  }
+}
 
 /**
  * Implementation of hook_form_alter().
@@ -67,9 +75,17 @@ function realname_registration_user_presave(&$edit, $account, $category) {
   if(isset($edit['name'])) {
     if ($edit['name'] == 'unset_username') {
       // Generate the username based on first name and last name fields.
-      $first_init = drupal_substr($edit['firstname'], 0, 1);
-      $lastname = $edit['lastname'];
-      $username = strtolower($first_init . $lastname);
+      if((variable_get('realname_registration_format')) == 0) {
+        $username = $edit['firstname']." ".$edit['lastname'];
+      }
+      if((variable_get('realname_registration_format')) == 1) {
+        $first_init = drupal_substr($edit['firstname'], 0, 1);
+        $lastname = $edit['lastname'];
+        $username = $first_init.$lastname;
+      }
+      if(variable_get('realname_registration_tolower')) {
+        $username = strtolower($username);
+      }
 
       // Check if the username already exists in the database.
       $result = db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username));
@@ -85,6 +101,7 @@ function realname_registration_user_presave(&$edit, $account, $category) {
     }
   }
 }
+  
 
 /**
  * Form validation handler for user_register_form().
@@ -92,8 +109,6 @@ function realname_registration_user_presave(&$edit, $account, $category) {
  * @see user_register_form()
  * @see user_register_submit()
  */
-
-
 function realname_registration_validate($form, &$form_state) {
   // A first name must be letters only.
   if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values']['firstname'])) {
@@ -103,4 +118,24 @@ function realname_registration_validate($form, &$form_state) {
   if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values']['lastname'])) {
     form_set_error('lastname', t('Last name must only contain letters'));
   }
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function realname_registration_menu() {
+  $items = array();
+
+  $items['admin/config/people/realname_registration'] = array(
+    'title' => 'Realname registration',
+    'description' => 'Realname registration username settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('realname_registration_settings_form'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10,
+    'file' => 'realname_registration.admin.inc',
+   );
+
+  return $items;
 }

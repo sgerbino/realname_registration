@@ -1,3 +1,7 @@
 name = Realname Registration 
 description = "For registration process using first initial and last name as username."
 core = 7.x
+files[] = realname_registration.module
+files[] = realname_registration.install
+files[] = realname_registration.admin.inc
+configure = admin/config/people/realname_registration
