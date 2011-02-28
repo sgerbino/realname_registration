@@ -18,7 +18,7 @@ function realname_registration_settings_form() {
     '#type' => 'radios',
     '#title' => t('Username format'),
     '#description' => t('Select the format in which Realname registration will create new usernames.'),
-    '#default_value' => variable_get('realname_registration_format', 'Firstname and lastname separated by a space'),
+    '#default_value' => variable_get('realname_registration_format', 0),
     '#options' => array(t('Firstname and lastname separated by a space'), t('First initial and lastname')),
     '#required' => TRUE,
   );
