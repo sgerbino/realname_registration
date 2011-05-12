@@ -64,11 +64,8 @@ function realname_registration_settings_form() {
 }
 
 function realname_registration_settings_validate($form, &$form_state) {
-  $lastname_field = variable_get('realname_registration_lastname_field');
-  $firstname_field = variable_get('realname_registration_firstname_field');
-
-  $firstname_instance = field_info_instance('user', $firstname_field, 'user');
-  $lastname_instance = field_info_instance('user', $lastname_field, 'user');
+  $firstname_instance = field_info_instance('user', $form_state['values']['realname_registration_firstname_field'], 'user');
+  $lastname_instance = field_info_instance('user', $form_state['values']['realname_registration_lastname_field'], 'user');
 
   $field_error_msg = "
 The field name you've supplied either doesn't exist or fails to meet the following requirements:
@@ -81,6 +78,7 @@ The field name you've supplied either doesn't exist or fails to meet the followi
 
   if($firstname_instance['required'] != 1) {
     form_set_error('realname_registration_firstname_field', t($field_error_msg));
+    variable_set('realname_registration_firstname_field','');
   }
   if($lastname_instance['required'] != 1) {
     form_set_error('realname_registration_lastname_field', t($field_error_msg));
