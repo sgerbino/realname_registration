@@ -12,7 +12,7 @@
  */
 function realname_registration_help($path, $arg) {
   if ($path == 'admin/help#realname_registration') {
-  return t('Force usernames based on firstname and lastname fields on the registration page.');
+  return t('Force usernames based on first name and last name fields on the registration page.');
   }
 }
 
@@ -23,49 +23,25 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
   if (!($form_id == 'user_register_form')) {
     return;
   }
+
+  $lastname_field = variable_get('realname_registration_lastname_field');
+  $firstname_field = variable_get('realname_registration_firstname_field');
+
   if (isset($form['account']) && is_array($form['account'])) {
     $form['account']['name']['#type'] = 'hidden';
     $form['account']['name']['#value'] = 'unset_username';
-    
-    $form['account']['firstname'] = array(
-    '#description' => t('Please enter your first name, this field must only contain letters.'),
-    '#maxlength' => 60,
-    '#type' => 'textfield',
-    '#title' => t('First name'),
-    '#weight' => -500,
-    '#required' => TRUE
-    );
-    
-    $form['account']['lastname'] = array(
-    '#description' => t('Please enter your last name, this field must only contain letters.'),
-    '#maxlength' => 60,
-    '#type' => 'textfield',
-    '#title' => t('Last name'),
-    '#weight' => -499,
-    '#required' => TRUE
-    );
   }
   else {
     $form['name']['#type'] = 'hidden';
     $form['name']['#value'] = 'unset_username';
-    $form['firstname'] = array(
-    '#description' => 'Please enter your first name, this field must only contain letters.',
-    '#maxlength' => 60,
-    '#type' => 'textfield',
-    '#title' => t('First name'),
-    '#weight' => -500,
-    '#required' => TRUE
-    );
-    $form['lastname'] = array(
-    '#description' => 'Please enter your last name, this field must only contain letters.',
-    '#maxlength' => 60,
-    '#type' => 'textfield',
-    '#title' => t('Last name'),
-    '#weight' => -499,
-    '#required' => TRUE
-    );
   }
-  $form['#validate'][] = 'realname_registration_validate';
+
+  $form[$firstname_field]['#weight'] = -500;
+  $form[$lastname_field]['#weight'] = -499;
+
+  //if(variable_get('realname_registration_use_validation')) {
+    $form['#validate'][] = 'realname_registration_validate';
+  //}
 }
 
 /**
@@ -74,13 +50,15 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
 function realname_registration_user_presave(&$edit, $account, $category) {
   if(isset($edit['name'])) {
     if ($edit['name'] == 'unset_username') {
+      $lastname_field = variable_get('realname_registration_lastname_field');
+      $firstname_field = variable_get('realname_registration_firstname_field');
       // Generate the username based on first name and last name fields.
       if((variable_get('realname_registration_format')) == 0) {
-        $username = $edit['firstname']." ".$edit['lastname'];
+        $username = $edit[$firstname_field]['und'][0]['value']." ".$edit[$lastname_field]['und']['0']['value'];
       }
       if((variable_get('realname_registration_format')) == 1) {
-        $first_init = drupal_substr($edit['firstname'], 0, 1);
-        $lastname = $edit['lastname'];
+        $first_init = drupal_substr($edit[$firstname_field]['und'][0]['value'], 0, 1);
+        $lastname = $edit[$lastname_field]['und'][0]['value'];
         $username = $first_init.$lastname;
       }
       if(variable_get('realname_registration_tolower')) {
@@ -110,13 +88,16 @@ function realname_registration_user_presave(&$edit, $account, $category) {
  * @see user_register_submit()
  */
 function realname_registration_validate($form, &$form_state) {
+  $lastname_field = variable_get('realname_registration_lastname_field');
+  $firstname_field = variable_get('realname_registration_firstname_field');
+
   // A first name must be letters only.
-  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values']['firstname'])) {
-    form_set_error('firstname', t('First name must only contain letters'));
+  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values'][$firstname_field]['und'][0]['value'])) {
+    form_set_error($firstname_field, t('First name must only contain letters'));
   }
   // A last name must be letters only.
-  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values']['lastname'])) {
-    form_set_error('lastname', t('Last name must only contain letters'));
+  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values'][$lastname_field]['und'][0]['value'])) {
+    form_set_error($lastname_field, t('Last name must only contain letters'));
   }
 }
 
