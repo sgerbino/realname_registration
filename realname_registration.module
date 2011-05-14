@@ -11,8 +11,27 @@
  * Implement hook_help().
  */
 function realname_registration_help($path, $arg) {
-  if ($path == 'admin/help#realname_registration') {
-  return t('Force usernames based on first name and last name fields on the registration page.');
+  switch ($path) {
+    case 'admin/help#realname_registration':
+      $output = '<h3>' . t('Realname registration') . '</h3>';
+      $output .= '<h4>' . t('Summary') . '</h4>';
+      $output .= '<p>' . t('Usernames are made of a combination of the first name field and last name field. The first name and last name of the user will be stored in your provided user fields.') . '</p>';
+      $output .= '<h4>' . t('Settings') . '</h4>';
+      $output .= '<dl>';
+      $output .= '<dt><strong>' . t('Create your first name and last name fields') . '</strong></dt>';
+      $output .= '<dd>' .t('(If you already have these fields, take note of the names and skip this step)'). '</dd>'; 
+      $output .= '<dd>' .t('Navigate to <a href="../config/people/accounts/fields">admin/config/people/accounts/fields</a> and create a text field that will hold the user\'s first name.').' '; 
+      $output .= t('While editing the field, ensure that the Required field option is checked, also to Display on the registration form.').' '; 
+      $output .= t('Repeat this step for the last name field. Be sure to take note of what you have named the new fields.') . '</dd>';
+      $output .= '<dd><a href="../config/people/accounts/fields">'.t('Jump to Managing user fields').'</a></dd>';
+      $output .= '</dl>';
+      $output .= '<dl>';
+      $output .= '<dt><strong>' . t('Configure the Realname registration module') . '</strong></dt>';
+      $output .= '<dd>' . t('Now that you have first name and last name fields associated with your users, you can map these fields in Realname registration.').' ';
+      $output .= t('Type the field names that you have created in the appropriate textfields, and select your other options and click Submit.'). '</dd>';
+      $output .= '<dd><a href="../config/people/realname_registration">'.t('Jump to Realname registration configuration').'</a></dd>';
+      $output .= '</dl>';
+      return $output;
   }
 }
 
@@ -39,9 +58,9 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
   $form[$firstname_field]['#weight'] = -500;
   $form[$lastname_field]['#weight'] = -499;
 
-  //if(variable_get('realname_registration_use_validation')) {
+  if(variable_get('realname_registration_use_validation')) {
     $form['#validate'][] = 'realname_registration_validate';
-  //}
+  }
 }
 
 /**
@@ -52,6 +71,7 @@ function realname_registration_user_presave(&$edit, $account, $category) {
     if ($edit['name'] == 'unset_username') {
       $lastname_field = variable_get('realname_registration_lastname_field');
       $firstname_field = variable_get('realname_registration_firstname_field');
+
       // Generate the username based on first name and last name fields.
       if((variable_get('realname_registration_format')) == 0) {
         $username = $edit[$firstname_field]['und'][0]['value']." ".$edit[$lastname_field]['und']['0']['value'];
@@ -67,6 +87,7 @@ function realname_registration_user_presave(&$edit, $account, $category) {
 
       // Check if the username already exists in the database.
       $result = db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username));
+
       // While the username is taken, append a number and increment it until our username is unique.
       $i = 0;
       while ($result->rowCount()) {
@@ -93,11 +114,11 @@ function realname_registration_validate($form, &$form_state) {
 
   // A first name must be letters only.
   if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values'][$firstname_field]['und'][0]['value'])) {
-    form_set_error($firstname_field, t('First name must only contain letters'));
+    form_set_error($firstname_field, t('First name must only contain letters.'));
   }
   // A last name must be letters only.
   if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values'][$lastname_field]['und'][0]['value'])) {
-    form_set_error($lastname_field, t('Last name must only contain letters'));
+    form_set_error($lastname_field, t('Last name must only contain letters.'));
   }
 }
 
