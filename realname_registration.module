@@ -46,20 +46,22 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
   $lastname_field = variable_get('realname_registration_lastname_field');
   $firstname_field = variable_get('realname_registration_firstname_field');
 
-  if (isset($form['account']) && is_array($form['account'])) {
-    $form['account']['name']['#type'] = 'hidden';
-    $form['account']['name']['#value'] = 'unset_username';
-  }
-  else {
-    $form['name']['#type'] = 'hidden';
-    $form['name']['#value'] = 'unset_username';
-  }
+  if(isset($lastname_field) && isset($firstname_field)) {
+    if (isset($form['account']) && is_array($form['account'])) {
+      $form['account']['name']['#type'] = 'hidden';
+      $form['account']['name']['#value'] = 'unset_username';
+    }
+    else {
+      $form['name']['#type'] = 'hidden';
+      $form['name']['#value'] = 'unset_username';
+    }
 
-  $form[$firstname_field]['#weight'] = -500;
-  $form[$lastname_field]['#weight'] = -499;
+    $form[$firstname_field]['#weight'] = -500;
+    $form[$lastname_field]['#weight'] = -499;
 
-  if(variable_get('realname_registration_use_validation')) {
-    $form['#validate'][] = 'realname_registration_validate';
+    if(variable_get('realname_registration_use_validation')) {
+      $form['#validate'][] = 'realname_registration_validate';
+    }
   }
 }
 
