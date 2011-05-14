@@ -16,9 +16,9 @@ function realname_registration_settings_form() {
 
   $field_req = "
 <ul>
-  <li>The field name is correct and represents an existing field</li>
-  <li>The field is associated with the <em>user</em> entity</li>
-  <li>The field is required and displays on the registration form</li>
+  <li>".t('The field name is correct and represents an existing field')."</li>
+  <li>".t('The field is associated with the').' <em>'.t('user')."</em> ".t('entity')."</li>
+  <li>".t('The field is required and displays on the registration form')."</li>
 </ul>
 ";
 
@@ -26,14 +26,14 @@ function realname_registration_settings_form() {
     '#type' => 'textfield',
     '#title' => t('First name field'),
     '#default_value' => variable_get('realname_registration_firstname_field'),
-    '#description' => t("The name of your first name field. Ensure that: ".$field_req),
+    '#description' => t("The name of your first name field. Ensure that:").$field_req,
   );
 
   $form['realname_registration_lastname_field'] = array(
     '#type' => 'textfield',
     '#title' => t('Last name field'),
     '#default_value' => variable_get('realname_registration_lastname_field'),
-    '#description' => t("The name of your last name field. Ensure that: ".$field_req),
+    '#description' => t("The name of your last name field. Ensure that:").$field_req,
   );
 
   $form['realname_registration_format'] = array(
