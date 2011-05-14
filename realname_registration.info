@@ -1,5 +1,5 @@
 name = Realname registration 
-description = "For registration process using first initial and last name as username."
+description = "For generating usernames based on first name and last name."
 core = 7.x
 files[] = realname_registration.module
 files[] = realname_registration.install
