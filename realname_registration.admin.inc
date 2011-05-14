@@ -68,32 +68,32 @@ function realname_registration_settings_validate($form, &$form_state) {
   $firstname_instance = field_info_instance('user', $form_state['values']['realname_registration_firstname_field'], 'user');
   $lastname_instance = field_info_instance('user', $form_state['values']['realname_registration_lastname_field'], 'user');
 
-  $err_pretext = 'The field name, <em>';
-  $err_req = '</em>, you\'ve provided must be required.';
-  $err_unknown = '</em>, you\'ve provided either does not exist or is not associated with the user entity and bundle.';
-  $err_textfield = '</em>, must use textfield widget.';
+  $err_pretext = t('The field name').', <em>';
+  $err_req = '</em>, '.t("you've provided must be required.");
+  $err_unknown = '</em>, '.t("you've provided either does not exist or is not associated with the user entity and bundle.");
+  $err_textfield = '</em>, '.t('must use textfield widget.');
   
   // We must check to see if the provided fields return a valid instance.
   if(!isset($firstname_instance)) {
-    form_set_error('realname_registration_firstname_field', t($err_pretext).$form_state['values']['realname_registration_firstname_field'].t($err_unknown));
+    form_set_error('realname_registration_firstname_field', $err_pretext.$form_state['values']['realname_registration_firstname_field'].$err_unknown);
   }
   if(!isset($lastname_instance)) {
-    form_set_error('realname_registration_lastname_field', t($err_pretext).$form_state['values']['realname_registration_lastname_field'].t($err_unknown));
+    form_set_error('realname_registration_lastname_field', $err_pretext.$form_state['values']['realname_registration_lastname_field'].$err_unknown);
   }
   
   // The widget associated with the field the user has provided should be a text field.
   if($firstname_instance['widget']['type'] != 'text_textfield') {
-    form_set_error('realname_registration_firstname_field', t($err_pretext).$form_state['values']['realname_registration_firstname_field'].t($err_textfield));
+    form_set_error('realname_registration_firstname_field', $err_pretext.$form_state['values']['realname_registration_firstname_field'].$err_textfield);
   }
   if($lastname_instance['widget']['type'] != 'text_textfield') {
-    form_set_error('realname_registration_lastname_field', t($err_pretext).$form_state['values']['realname_registration_lastname_field'].t($err_textfield));
+    form_set_error('realname_registration_lastname_field', $err_pretext.$form_state['values']['realname_registration_lastname_field'].$err_textfield);
   }
 
   // Because the field is used in creating usernames, it should be required.
   if($firstname_instance['required'] != 1) {
-    form_set_error('realname_registration_firstname_field', t($err_pretext).$form_state['values']['realname_registration_firstname_field'].t($err_req));
+    form_set_error('realname_registration_firstname_field', $err_pretext.$form_state['values']['realname_registration_firstname_field'].$err_req);
   }
   if($lastname_instance['required'] != 1) {
-    form_set_error('realname_registration_lastname_field', t($err_pretext).$form_state['values']['realname_registration_lastname_field'].t($err_req));
+    form_set_error('realname_registration_lastname_field', $err_pretext.$form_state['values']['realname_registration_lastname_field'].$err_req);
   }
 }
