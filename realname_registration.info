@@ -1,7 +1,9 @@
 name = Realname registration 
 description = "For generating usernames based on first name and last name."
 core = 7.x
+dependencies[] = token
 files[] = realname_registration.module
 files[] = realname_registration.install
 files[] = realname_registration.admin.inc
+files[] = realname_registration.tokens.inc
 configure = admin/config/people/realname_registration

@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Admin page callbacks for the Realname registration module.
+ * Admin page callbacks for the realname_registration module.
  *
  */
 
@@ -43,6 +43,13 @@ function realname_registration_settings_form() {
     '#default_value' => variable_get('realname_registration_format', 0),
     '#options' => array(t('First name and last name separated by a space (e.g., John Smith)'), t('First initial and last name (e.g., JSmith)')),
     '#required' => TRUE,
+  );
+
+  $form['realname_registration_ucfirst'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Force the first letters of the first and last names to uppercase'),
+    '#default_value' => variable_get('realname_registration_ucfirst', 1),
+    '#description' => t("Ensures that the first letter of the users first name and first letter of the users last name are capitalized."),
   );
 
   $form['realname_registration_tolower'] = array(

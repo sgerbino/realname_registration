@@ -4,7 +4,7 @@
  * For using real names during registration/
  *
  * The realname_registration allows usernames to be generated based upon
- * required first name and last name CCK fields on the registration form.
+ * required first name and last name fields on the registration form.
  */
 
 /**
@@ -74,9 +74,13 @@ function realname_registration_user_presave(&$edit, $account, $category) {
       $lastname_field = variable_get('realname_registration_lastname_field');
       $firstname_field = variable_get('realname_registration_firstname_field');
 
+      if((variable_get('realname_registration_ucfirst')) == 1) {
+        $edit[$firstname_field]['und'][0]['value'] = ucfirst($edit[$firstname_field]['und'][0]['value']);
+        $edit[$lastname_field]['und']['0']['value'] = ucfirst($edit[$lastname_field]['und'][0]['value']);
+      }
       // Generate the username based on first name and last name fields.
       if((variable_get('realname_registration_format')) == 0) {
-        $username = $edit[$firstname_field]['und'][0]['value']." ".$edit[$lastname_field]['und']['0']['value'];
+        $username = $edit[$firstname_field]['und'][0]['value']." ".$edit[$lastname_field]['und'][0]['value'];
       }
       if((variable_get('realname_registration_format')) == 1) {
         $first_init = drupal_substr($edit[$firstname_field]['und'][0]['value'], 0, 1);
