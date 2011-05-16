@@ -4,15 +4,34 @@
  * For using real names during registration/
  *
  * The realname_registration allows usernames to be generated based upon
- * required first name and last name CCK fields on the registration form.
+ * required first name and last name fields on the registration form.
  */
 
 /**
  * Implement hook_help().
  */
 function realname_registration_help($path, $arg) {
-  if ($path == 'admin/help#realname_registration') {
-  return t('Force usernames based on firstname and lastname fields on the registration page.');
+  switch ($path) {
+    case 'admin/help#realname_registration':
+      $output = '<h3>' . t('Realname registration') . '</h3>';
+      $output .= '<h4>' . t('Summary') . '</h4>';
+      $output .= '<p>' . t('Usernames are made of a combination of the first name field and last name field. The first name and last name of the user will be stored in your provided user fields.') . '</p>';
+      $output .= '<h4>' . t('Settings') . '</h4>';
+      $output .= '<dl>';
+      $output .= '<dt><strong>' . t('Create your first name and last name fields') . '</strong></dt>';
+      $output .= '<dd>' .t('(If you already have these fields, take note of the names and skip this step)'). '</dd>'; 
+      $output .= '<dd>' .t('Navigate to <a href="../config/people/accounts/fields">admin/config/people/accounts/fields</a> and create a text field that will hold the user\'s first name.').' '; 
+      $output .= t('While editing the field, ensure that the Required field option is checked, also to Display on the registration form.').' '; 
+      $output .= t('Repeat this step for the last name field. Be sure to take note of what you have named the new fields.') . '</dd>';
+      $output .= '<dd><a href="../config/people/accounts/fields">'.t('Jump to Managing user fields').'</a></dd>';
+      $output .= '</dl>';
+      $output .= '<dl>';
+      $output .= '<dt><strong>' . t('Configure the Realname registration module') . '</strong></dt>';
+      $output .= '<dd>' . t('Now that you have first name and last name fields associated with your users, you can map these fields in Realname registration.').' ';
+      $output .= t('Type the field names that you have created in the appropriate textfields, and select your other options and click Submit.'). '</dd>';
+      $output .= '<dd><a href="../config/people/realname_registration">'.t('Jump to Realname registration configuration').'</a></dd>';
+      $output .= '</dl>';
+      return $output;
   }
 }
 
@@ -23,49 +42,27 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
   if (!($form_id == 'user_register_form')) {
     return;
   }
-  if (isset($form['account']) && is_array($form['account'])) {
-    $form['account']['name']['#type'] = 'hidden';
-    $form['account']['name']['#value'] = 'unset_username';
-    
-    $form['account']['firstname'] = array(
-    '#description' => t('Please enter your first name, this field must only contain letters.'),
-    '#maxlength' => 60,
-    '#type' => 'textfield',
-    '#title' => t('First name'),
-    '#weight' => -500,
-    '#required' => TRUE
-    );
-    
-    $form['account']['lastname'] = array(
-    '#description' => t('Please enter your last name, this field must only contain letters.'),
-    '#maxlength' => 60,
-    '#type' => 'textfield',
-    '#title' => t('Last name'),
-    '#weight' => -499,
-    '#required' => TRUE
-    );
+
+  $lastname_field = variable_get('realname_registration_lastname_field');
+  $firstname_field = variable_get('realname_registration_firstname_field');
+
+  if(isset($lastname_field) && isset($firstname_field)) {
+    if (isset($form['account']) && is_array($form['account'])) {
+      $form['account']['name']['#type'] = 'hidden';
+      $form['account']['name']['#value'] = 'unset_username';
+    }
+    else {
+      $form['name']['#type'] = 'hidden';
+      $form['name']['#value'] = 'unset_username';
+    }
+
+    $form[$firstname_field]['#weight'] = -500;
+    $form[$lastname_field]['#weight'] = -499;
+
+    if(variable_get('realname_registration_use_validation')) {
+      $form['#validate'][] = 'realname_registration_validate';
+    }
   }
-  else {
-    $form['name']['#type'] = 'hidden';
-    $form['name']['#value'] = 'unset_username';
-    $form['firstname'] = array(
-    '#description' => 'Please enter your first name, this field must only contain letters.',
-    '#maxlength' => 60,
-    '#type' => 'textfield',
-    '#title' => t('First name'),
-    '#weight' => -500,
-    '#required' => TRUE
-    );
-    $form['lastname'] = array(
-    '#description' => 'Please enter your last name, this field must only contain letters.',
-    '#maxlength' => 60,
-    '#type' => 'textfield',
-    '#title' => t('Last name'),
-    '#weight' => -499,
-    '#required' => TRUE
-    );
-  }
-  $form['#validate'][] = 'realname_registration_validate';
 }
 
 /**
@@ -74,13 +71,20 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
 function realname_registration_user_presave(&$edit, $account, $category) {
   if(isset($edit['name'])) {
     if ($edit['name'] == 'unset_username') {
+      $lastname_field = variable_get('realname_registration_lastname_field');
+      $firstname_field = variable_get('realname_registration_firstname_field');
+
+      if((variable_get('realname_registration_ucfirst')) == 1) {
+        $edit[$firstname_field]['und'][0]['value'] = ucfirst($edit[$firstname_field]['und'][0]['value']);
+        $edit[$lastname_field]['und']['0']['value'] = ucfirst($edit[$lastname_field]['und'][0]['value']);
+      }
       // Generate the username based on first name and last name fields.
       if((variable_get('realname_registration_format')) == 0) {
-        $username = $edit['firstname']." ".$edit['lastname'];
+        $username = $edit[$firstname_field]['und'][0]['value']." ".$edit[$lastname_field]['und'][0]['value'];
       }
       if((variable_get('realname_registration_format')) == 1) {
-        $first_init = drupal_substr($edit['firstname'], 0, 1);
-        $lastname = $edit['lastname'];
+        $first_init = drupal_substr($edit[$firstname_field]['und'][0]['value'], 0, 1);
+        $lastname = $edit[$lastname_field]['und'][0]['value'];
         $username = $first_init.$lastname;
       }
       if(variable_get('realname_registration_tolower')) {
@@ -89,6 +93,7 @@ function realname_registration_user_presave(&$edit, $account, $category) {
 
       // Check if the username already exists in the database.
       $result = db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username));
+
       // While the username is taken, append a number and increment it until our username is unique.
       $i = 0;
       while ($result->rowCount()) {
@@ -110,13 +115,16 @@ function realname_registration_user_presave(&$edit, $account, $category) {
  * @see user_register_submit()
  */
 function realname_registration_validate($form, &$form_state) {
+  $lastname_field = variable_get('realname_registration_lastname_field');
+  $firstname_field = variable_get('realname_registration_firstname_field');
+
   // A first name must be letters only.
-  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values']['firstname'])) {
-    form_set_error('firstname', t('First name must only contain letters'));
+  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values'][$firstname_field]['und'][0]['value'])) {
+    form_set_error($firstname_field, t('First name must only contain letters.'));
   }
   // A last name must be letters only.
-  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values']['lastname'])) {
-    form_set_error('lastname', t('Last name must only contain letters'));
+  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values'][$lastname_field]['und'][0]['value'])) {
+    form_set_error($lastname_field, t('Last name must only contain letters.'));
   }
 }
 
@@ -127,8 +135,8 @@ function realname_registration_menu() {
   $items = array();
 
   $items['admin/config/people/realname_registration'] = array(
-    'title' => 'Realname registration',
-    'description' => 'Realname registration username settings',
+    'title' => t('Realname registration'),
+    'description' => t('Realname registration settings'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('realname_registration_settings_form'),
     'access arguments' => array('access administration pages'),
