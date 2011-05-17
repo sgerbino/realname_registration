@@ -1,3 +1,4 @@
-name = Realname Registration 
-description = "For registration process using first initial and last name as username."
+name = Realname registration 
+description = "For generating usernames based on a first name and last name profile fields."
 core = 6.x
+dependencies[] = token
