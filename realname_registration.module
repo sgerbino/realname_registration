@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * For using real names during registration/
@@ -113,7 +112,65 @@ function realname_registration_menu() {
     'type' => MENU_NORMAL_ITEM,
     'weight' => 10,
     'file' => 'realname_registration.admin.inc',
-   );
+  );
 
   return $items;
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function realname_registration_token_list($type = 'all') {
+  if ($type == 'user' || $type == 'all') {
+    $tokens['user']['first-name']     = t("The first name of the user.");
+    $tokens['user']['last-name']      = t("The last name of the user.");
+    $tokens['user']['first-initial']  = t("The first initial of the user.");
+    $tokens['user']['last-initial']   = t("The last initial of the user.");
+    return $tokens;
+  }
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function realname_registration_token_values($type, $object = NULL, $options = array()) {
+  $values = array();
+  switch ($type) {
+    case 'user':
+      if (!empty($object)) {
+        $account = $object;
+      }
+      else {
+        $account = user_load(array('uid' => $GLOBALS['user']->uid));
+      }
+      if ($account->uid) {
+        $lastname_field = variable_get('realname_registration_lastname_field','');
+        $firstname_field = variable_get('realname_registration_firstname_field','');
+        
+        $firstname = db_result(db_query("
+           SELECT profile_values.value
+           FROM {profile_values}
+           INNER JOIN {profile_fields}
+           ON profile_values.fid = profile_fields.fid
+           WHERE profile_fields.name = '%s'
+           AND profile_values.uid = %d
+         ", $firstname_field, $account->uid ));
+        
+        $lastname = db_result(db_query("
+           SELECT profile_values.value
+           FROM profile_values
+           INNER JOIN profile_fields
+           ON profile_values.fid = profile_fields.fid
+           WHERE profile_fields.name = '%s'
+           AND profile_values.uid = %d
+         ", $lastname_field, $account->uid ));
+        
+        $values['first-name'] = $firstname;
+        $values['last-name'] = $lastname;
+        $values['first-initial'] = drupal_substr($firstname, 0, 1);
+        $values['last-initial'] = drupal_substr($lastname, 0, 1);
+      }
+      break;
+  }
+  return $values;
 }
