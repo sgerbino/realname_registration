@@ -65,6 +65,7 @@ function realname_registration_user($op, &$edit, &$account, $category = NULL) {
         }
 
         // Check if the username already exists in the database.
+        $original_username = $username;
         while (db_result(db_query("SELECT COUNT(*) FROM {users} WHERE name = '%s';", $username))) {
           $username = $original_username . ++$i;
         }
