@@ -70,8 +70,8 @@ function realname_registration_settings_form() {
 }
 
 function realname_registration_settings_validate($form, &$form_state) {
-  $firstname_field = db_fetch_object(db_query("SELECT * FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_firstname_field']));
-  $lastname_field = db_fetch_object(db_query("SELECT * FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_lastname_field']));
+  $firstname_field = db_fetch_object(db_query("SELECT type, required, register FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_firstname_field']));
+  $lastname_field = db_fetch_object(db_query("SELECT type, required, register FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_lastname_field']));
 
   $err_pretext = t('The field name').', <em>';
   $err_register = '</em>, '.t("you've provided must be displayed on the registration form.");
