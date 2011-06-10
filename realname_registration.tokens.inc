@@ -43,19 +43,19 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
       foreach ($tokens as $name => $original) {
         switch ($name) {
           case 'first-name':
-            $replacements[$original] = !empty($account->$field_firstname) ? $account->{$field_firstname}['und']['0']['value'] : t('not yet available');
+            $replacements[$original] = !empty($account->$field_firstname) ? $account->{$field_firstname}['und']['0']['value'] : '';
             break;
 
           case 'last-name':
-            $replacements[$original] = !empty($account->$field_lastname) ? $account->{$field_lastname}['und']['0']['value'] : t('not yet available');
+            $replacements[$original] = !empty($account->$field_lastname) ? $account->{$field_lastname}['und']['0']['value'] : '';
             break;
 
           case 'first-initial':
-            $replacements[$original] = !empty($account->$field_firstname) ? drupal_substr($account->{$field_firstname}['und']['0']['value'], 0, 1) : t('not yet available');
+            $replacements[$original] = !empty($account->$field_firstname) ? drupal_substr($account->{$field_firstname}['und']['0']['value'], 0, 1) : '';
             break;
  
           case 'last-initial':
-            $replacements[$original] = !empty($account->$field_lastname) ? drupal_substr($account->{$field_lastname}['und']['0']['value'], 0, 1) : t('not yet available');
+            $replacements[$original] = !empty($account->$field_lastname) ? drupal_substr($account->{$field_lastname}['und']['0']['value'], 0, 1) : '';
             break;
         }
       }
