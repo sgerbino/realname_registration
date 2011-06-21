@@ -12,6 +12,10 @@ function realname_registration_token_info() {
     'name' => t('First name'),
     'description' => t("The first name of the user."),
   );
+  $user['middle-name'] = array(
+    'name' => t('Middle name'),
+    'description' => t("The middle name of the user."),
+  );
   $user['last-name'] = array(
     'name' => t('Last name'),
     'description' => t("The last name of the user."),
@@ -19,6 +23,10 @@ function realname_registration_token_info() {
   $user['first-initial'] = array(
     'name' => t('First inital'),
     'description' => t("The first initial of the user."),
+  );
+  $user['middle-initial'] = array(
+    'name' => t('Middle inital'),
+    'description' => t("The middle initial of the user."),
   );
   $user['last-initial'] = array(
     'name' => t('Last initial'),
@@ -36,7 +44,9 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
   $replacements = array();
 
   $field_firstname = variable_get('realname_registration_firstname_field');
+  $field_middlename = variable_get('realname_registration_middlename_field');
   $field_lastname = variable_get('realname_registration_lastname_field');
+
   if(isset($field_firstname) && isset($field_lastname)) {
     if ($type == 'user' && !empty($data['user'])) {
       $account = $data['user'];
@@ -44,6 +54,10 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
         switch ($name) {
           case 'first-name':
             $replacements[$original] = !empty($account->$field_firstname) ? $account->{$field_firstname}['und']['0']['value'] : '';
+            break;
+
+          case 'middle-name':
+            $replacements[$original] = !empty($account->$field_middlename) ? $account->{$field_middlename}['und']['0']['value'] : '';
             break;
 
           case 'last-name':
@@ -54,6 +68,10 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
             $replacements[$original] = !empty($account->$field_firstname) ? drupal_substr($account->{$field_firstname}['und']['0']['value'], 0, 1) : '';
             break;
  
+          case 'middle-initial':
+            $replacements[$original] = !empty($account->$field_middlename) ? drupal_substr($account->{$field_middlename}['und']['0']['value'], 0, 1) : '';
+            break;
+
           case 'last-initial':
             $replacements[$original] = !empty($account->$field_lastname) ? drupal_substr($account->{$field_lastname}['und']['0']['value'], 0, 1) : '';
             break;
