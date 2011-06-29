@@ -170,12 +170,10 @@ function realname_registration_menu() {
 
   $items['admin/config/people/realname_registration'] = array(
     'title' => t('Realname registration'),
-    'description' => t('Realname registration settings'),
+    'description' => t('Administer settings for Realname registration.'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('realname_registration_settings_form'),
     'access arguments' => array('access administration pages'),
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 10,
     'file' => 'realname_registration.admin.inc',
    );
 
