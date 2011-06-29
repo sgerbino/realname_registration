@@ -90,47 +90,47 @@ function realname_registration_settings_form() {
 }
 
 function realname_registration_settings_validate($form, &$form_state) {
-  // Retrieve the user instance and bundle using the field names provided.
-  $firstname_instance = field_info_instance('user', $form_state['values']['realname_registration_firstname_field'], 'user');
-  $middlename_instance = field_info_instance('user', $form_state['values']['realname_registration_middlename_field'], 'user');
-  $lastname_instance = field_info_instance('user', $form_state['values']['realname_registration_lastname_field'], 'user');
-
   $err_pretext = t('The field name').', <em>';
   $err_req = '</em>, '.t("you've provided must be required.");
   $err_unknown = '</em>, '.t("you've provided either does not exist or is not associated with the user entity and bundle.");
   $err_textfield = '</em>, '.t('must use textfield widget.');
-  
-  if($form_state['values']['realname_registration_format'] == 2 || $form_state['values']['realname_registration_format'] == 3) {
-    if( empty($form_state['values']['realname_registration_middlename_field']) ) {
+
+  // Validate the first name field.
+  $firstname_instance = field_info_instance('user', $form_state['values']['realname_registration_firstname_field'], 'user');
+  if(!isset($firstname_instance)) {
+    form_set_error('realname_registration_firstname_field', $err_pretext.$form_state['values']['realname_registration_firstname_field'].$err_unknown);
+  }
+  if($firstname_instance['widget']['type'] != 'text_textfield') {
+    form_set_error('realname_registration_firstname_field', $err_pretext.$form_state['values']['realname_registration_firstname_field'].$err_textfield);
+  }
+  if($firstname_instance['required'] != 1) {
+    form_set_error('realname_registration_firstname_field', $err_pretext.$form_state['values']['realname_registration_firstname_field'].$err_req);
+  }
+
+  // Validate the middle name field if it is used.
+  if(!empty($form_state['values']['realname_registration_middlename_field'])) {
+    $middlename_instance = field_info_instance('user', $form_state['values']['realname_registration_middlename_field'], 'user');
+    if(!isset($middlename_instance)) {
+      form_set_error('realname_registration_middlename_field', $err_pretext.$form_state['values']['realname_registration_middlename_field'].$err_unknown);
+    }
+    if($middlename_instance['widget']['type'] != 'text_textfield') {
+      form_set_error('realname_registration_middlename_field', $err_pretext.$form_state['values']['realname_registration_middlename_field'].$err_textfield);
+    }
+  }
+  else {
+    // If there is no middle name field provided, we can't base usernames off the middle initial.
+    if($form_state['values']['realname_registration_format'] == 2 || $form_state['values']['realname_registration_format'] == 3) {
       form_set_error('realname_registration_format', t('A valid middle name field is required for this username format.'));
     }
   }
 
-  // We must check to see if the provided fields return a valid instance.
-  if(!isset($firstname_instance)) {
-    form_set_error('realname_registration_firstname_field', $err_pretext.$form_state['values']['realname_registration_firstname_field'].$err_unknown);
-  }
-  if(!isset($middlename_instance)) {
-    form_set_error('realname_registration_middlename_field', $err_pretext.$form_state['values']['realname_registration_middlename_field'].$err_unknown);
-  }
+  // Validate the last name field.
+  $lastname_instance = field_info_instance('user', $form_state['values']['realname_registration_lastname_field'], 'user');
   if(!isset($lastname_instance)) {
     form_set_error('realname_registration_lastname_field', $err_pretext.$form_state['values']['realname_registration_lastname_field'].$err_unknown);
   }
-  
-  // The widget associated with the field the user has provided should be a text field.
-  if($firstname_instance['widget']['type'] != 'text_textfield') {
-    form_set_error('realname_registration_firstname_field', $err_pretext.$form_state['values']['realname_registration_firstname_field'].$err_textfield);
-  }
-  if($middlename_instance['widget']['type'] != 'text_textfield') {
-    form_set_error('realname_registration_middlename_field', $err_pretext.$form_state['values']['realname_registration_middlename_field'].$err_textfield);
-  }
   if($lastname_instance['widget']['type'] != 'text_textfield') {
     form_set_error('realname_registration_lastname_field', $err_pretext.$form_state['values']['realname_registration_lastname_field'].$err_textfield);
-  }
-
-  // Because the first and last name fields are needed to create usernames, it should be required.
-  if($firstname_instance['required'] != 1) {
-    form_set_error('realname_registration_firstname_field', $err_pretext.$form_state['values']['realname_registration_firstname_field'].$err_req);
   }
   if($lastname_instance['required'] != 1) {
     form_set_error('realname_registration_lastname_field', $err_pretext.$form_state['values']['realname_registration_lastname_field'].$err_req);
