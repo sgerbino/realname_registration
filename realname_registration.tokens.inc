@@ -47,7 +47,7 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
   $field_middlename = variable_get('realname_registration_middlename_field');
   $field_lastname = variable_get('realname_registration_lastname_field');
 
-  if(isset($field_firstname) && isset($field_lastname)) {
+  if (isset($field_firstname) && isset($field_lastname)) {
     if ($type == 'user' && !empty($data['user'])) {
       $account = $data['user'];
       foreach ($tokens as $name => $original) {
