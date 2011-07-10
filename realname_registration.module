@@ -153,17 +153,17 @@ function realname_registration_validate($form, &$form_state) {
   $lastname_field = variable_get('realname_registration_lastname_field');
 
   // A first name must be letters only.
-  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values'][$firstname_field]['und'][0]['value'])) {
+  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i", $form_state['values'][$firstname_field]['und'][0]['value'])) {
     form_set_error($firstname_field, t('First name must only contain letters.'));
   }
 
   // A middle name must be letters only.
-  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values'][$middlename_field]['und'][0]['value'])) {
+  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i", $form_state['values'][$middlename_field]['und'][0]['value'])) {
     form_set_error($middlename_field, t('Middle name must only contain letters.'));
   }
 
   // A last name must be letters only.
-  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values'][$lastname_field]['und'][0]['value'])) {
+  if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i", $form_state['values'][$lastname_field]['und'][0]['value'])) {
     form_set_error($lastname_field, t('Last name must only contain letters.'));
   }
 }
