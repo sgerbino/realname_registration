@@ -90,28 +90,34 @@ function realname_registration_user_presave(&$edit, $account, $category) {
 
       // Generate the username based on first name and last name fields.
       if ((variable_get('realname_registration_format')) == 0) {
-        $username = $edit[$firstname_field]['und'][0]['value'] . " " . $edit[$lastname_field]['und'][0]['value'];
+        $username = $edit[$firstname_field]['und'][0]['value'] . ' ' . $edit[$lastname_field]['und'][0]['value'];
       }
       if ((variable_get('realname_registration_format')) == 1) {
-        $first_init = drupal_substr($edit[$firstname_field]['und'][0]['value'], 0, 1);
-        $lastname = $edit[$lastname_field]['und'][0]['value'];
-        $username = $first_init . $lastname;
+        $username = drupal_substr($edit[$firstname_field]['und'][0]['value'], 0, 1) . $edit[$lastname_field]['und'][0]['value'];
       }
       if ((variable_get('realname_registration_format')) == 2) {
         if (!empty($edit[$middlename_field]['und'][0]['value'])) {
-          $username = $edit[$firstname_field]['und'][0]['value'] . " " . $edit[$middlename_field]['und'][0]['value'] . " " . $edit[$lastname_field]['und'][0]['value'];
+          $username = $edit[$firstname_field]['und'][0]['value'] . ' ' . $edit[$middlename_field]['und'][0]['value'] . ' ' . $edit[$lastname_field]['und'][0]['value'];
         }
         else {
-          $username = $edit[$firstname_field]['und'][0]['value'] . " " . $edit[$lastname_field]['und'][0]['value'];
+          $username = $edit[$firstname_field]['und'][0]['value'] . ' ' . $edit[$lastname_field]['und'][0]['value'];
         }
       }
       if ((variable_get('realname_registration_format')) == 3) {
-        $first_init = drupal_substr($edit[$firstname_field]['und'][0]['value'], 0, 1);
-        if (!empty($edit[$middlename_field]['und'][0]['value'])) {
-          $middle_init = drupal_substr($edit[$middlename_field]['und'][0]['value'], 0, 1);
+        $username = $edit[$firstname_field]['und'][0]['value'];
+        if(!empty($edit[$middlename_field]['und'][0]['value'])) {
+          $username .= ' ';
+          $username .= drupal_substr($edit[$middlename_field]['und'][0]['value'], 0, 1);
         }
-        $lastname = $edit[$lastname_field]['und'][0]['value'];
-        $username = $first_init . $middle_init . $lastname;
+        $username .= ' ';
+        $username .= $edit[$lastname_field]['und'][0]['value'];
+      }
+      if ((variable_get('realname_registration_format')) == 4) {
+        $username = drupal_substr($edit[$firstname_field]['und'][0]['value'], 0, 1);
+        if (!empty($edit[$middlename_field]['und'][0]['value'])) {
+          $username .= drupal_substr($edit[$middlename_field]['und'][0]['value'], 0, 1);
+        }
+        $username .= $edit[$lastname_field]['und'][0]['value'];
       }
 
       if (variable_get('realname_registration_tolower')) {
@@ -151,7 +157,7 @@ function realname_registration_validate($form, &$form_state) {
     form_set_error($firstname_field, t('First name must only contain letters.'));
   }
 
-  // A first name must be letters only.
+  // A middle name must be letters only.
   if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ]+$/i", $form_state['values'][$middlename_field]['und'][0]['value'])) {
     form_set_error($middlename_field, t('Middle name must only contain letters.'));
   }

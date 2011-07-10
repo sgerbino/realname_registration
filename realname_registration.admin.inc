@@ -56,9 +56,10 @@ function realname_registration_settings_form() {
     '#description' => t('Select the format in which Realname registration will create new usernames.'),
     '#default_value' => variable_get('realname_registration_format', 0),
     '#options' => array(
-      t('First name and last name separated by a space (e.g., John Smith)'),
+      t('First name and last name (e.g., John Smith)'),
       t('First initial and last name (e.g., JSmith)'),
       t('First name, middle name, and last name (e.g., John Jacob Smith)'),
+      t('First name, middle initial, and last name (e.g., John J Smith)'),
       t('First initial, middle initial, and last name (e.g., JJSmith)')
     ),
     '#required' => TRUE,
