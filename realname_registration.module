@@ -105,7 +105,7 @@ function realname_registration_user_presave(&$edit, $account, $category) {
       }
       if ((variable_get('realname_registration_format')) == 3) {
         $username = $edit[$firstname_field]['und'][0]['value'];
-        if(!empty($edit[$middlename_field]['und'][0]['value'])) {
+        if (!empty($edit[$middlename_field]['und'][0]['value'])) {
           $username .= ' ';
           $username .= drupal_substr($edit[$middlename_field]['und'][0]['value'], 0, 1);
         }
