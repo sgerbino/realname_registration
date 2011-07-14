@@ -107,7 +107,7 @@ function realname_registration_settings_validate($form, &$form_state) {
   if($firstname_field->type != 'textfield') {
     form_set_error('realname_registration_firstname_field', $err_pretext . $form_state['values']['realname_registration_firstname_field'] . $err_textfield);
   }
-  if(!empty($middlename_field)) {
+  if(!empty($form_state['values']['realname_registration_middlename_field'])) {
     if($middlename_field->type != 'textfield') {
       form_set_error('realname_registration_middlename_field', $err_pretext . $form_state['values']['realname_registration_middlename_field'] . $err_textfield);
     }
@@ -127,7 +127,7 @@ function realname_registration_settings_validate($form, &$form_state) {
   if($firstname_field->register != 1) {
     form_set_error('realname_registration_firstname_field', $err_pretext . $form_state['values']['realname_registration_firstname_field'] . $err_register);
   }
-  if(!empty($middlename_field)) {
+  if(!empty($form_state['values']['realname_registration_middlename_field'])) {
     if($middlename_field->register != 1) {
       form_set_error('realname_registration_middlename_field', $err_pretext . $form_state['values']['realname_registration_middlename_field'] . $err_register);
     }
