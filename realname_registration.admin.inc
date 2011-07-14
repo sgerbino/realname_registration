@@ -30,7 +30,9 @@ function realname_registration_settings_form() {
     '#type' => 'textfield',
     '#title' => t('Middle name field'),
     '#default_value' => variable_get('realname_registration_middlename_field', ''),
-    '#description' => t('The name of your first name field. Ensure that:') . $field_req,
+    '#description' => t('The name of your middle name field. Ensure that:') . '<ul><li>'
+      . t('The field name is correct and represents an existing profile field') . '</li><li>'
+      . t('The field is displayed on the registration form') . '</li></ul>',
   );
 
   $form['realname_registration_lastname_field'] = array(
