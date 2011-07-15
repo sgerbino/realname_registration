@@ -7,6 +7,23 @@
  * required first name and last name CCK fields on the registration form.
  */
 
+/*
+ * Implementation of hook_enable().
+ */
+function realname_registration_enable() {
+  if (module_exists('profile') || module_exists('content_profile_registration')) {
+    $success  = t('Realname registration has been successfully enabled. ');
+    $success .= t('Please procede to the <a href="../user/realname_registration">module configuration page</a>.');
+    drupal_set_message($success, 'status');
+  }
+  else {
+    $error  = t('Realname registration requires that you enable the Profile module or Content profile registration. ');
+    $error .= t('Please enable one of the depedent modules before re-enabling Realname registration');
+    drupal_set_message($error, 'error');
+    module_disable(array( 0 => 'realname_registration' ));
+  }
+}
+
 /**
  * Implementation of hook_form_alter().
  */
@@ -30,14 +47,14 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
     }
 
     // We must bring the name fields up so that they show at the top of the form.
-    if ((variable_get('realname_registration_use_content_profile_firstname_field', 0)) == 0) {
+    if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
       $form[$firstname_field]['#weight'] = -500;
     }
     else {
       $form['#field_info'][$firstname_field]['widget']['weight'] = -500;
     }
 
-    if ((variable_get('realname_registration_use_content_profile_middlename_field', 0)) == 0) {
+    if (!variable_get('realname_registration_use_content_profile_middlename_field', 0)) {
       if(!empty($middlename_field)) {
         $form[$middlename_field]['#weight'] = -499;
       }
@@ -48,7 +65,7 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
       }
     }
 
-    if ((variable_get('realname_registration_use_content_profile_lastname_field', 0)) == 0) {
+    if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
       $form[$lastname_field]['#weight'] = -498;
     }
     else {
@@ -73,134 +90,148 @@ function realname_registration_user($op, &$edit, &$account, $category = NULL) {
         $middlename_field = variable_get('realname_registration_middlename_field','');
         $firstname_field = variable_get('realname_registration_firstname_field','');
 
-        if ((variable_get('realname_registration_ucfirst', 0)) == 1) {
-          if ((variable_get('realname_registration_use_content_profile_firstname_field', 0)) == 0) {
+        if (variable_get('realname_registration_ucfirst', 0)) {
+          if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
             $edit[$firstname_field] = ucfirst($edit[$firstname_field]);
           }
           else {
             $edit[$firstname_field][0]['value'] = ucfirst($edit[$firstname_field][0]['value']);
           }
-          if ((variable_get('realname_registration_use_content_profile_middlename_field', 0)) == 0) {
+          if (!variable_get('realname_registration_use_content_profile_middlename_field', 0)) {
             $edit[$middlename_field] = ucfirst($edit[$middlename_field]);
           }
           else {
             $edit[$middlename_field][0]['value'] = ucfirst($edit[$middlename_field][0]['value']);
           }
-          if ((variable_get('realname_registration_use_content_profile_lastname_field', 0)) == 0) {
+          if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
             $edit[$lastname_field] = ucfirst($edit[$lastname_field]);
           }
           else {
             $edit[$lastname_field][0]['value'] = ucfirst($edit[$lastname_field][0]['value']);
           }
         }
+
         // Generate the username based on first name and last name fields.
-        if ((variable_get('realname_registration_format', 0)) == 0) {
-          if ((variable_get('realname_registration_use_content_profile_firstname_field', 0)) == 0) {
-            $username = $edit[$firstname_field];
-          }
-          else {
-            $username = $edit[$firstname_field][0]['value'];
-          }
-          $username .= ' ';
-          if ((variable_get('realname_registration_use_content_profile_lastname_field', 0)) == 0) {
-            $username .= $edit[$lastname_field];
-          }
-          else {
-            $username .= $edit[$lastname_field][0]['value'];
-          }
+        switch(variable_get('realname_registration_format', 0)) {
+          case 0:
+            // Create username based on first name and last name (e.g., John Smith).
+            if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
+              $username = $edit[$firstname_field];
+            }
+            else {
+              $username = $edit[$firstname_field][0]['value'];
+            }
+            $username .= ' ';
+            if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
+              $username .= $edit[$lastname_field];
+            }
+            else {
+              $username .= $edit[$lastname_field][0]['value'];
+            }
+            break;
+
+          case 1:
+            // Create username based on first initial and last name (e.g., JSmith).
+            if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
+              $username = drupal_substr($edit[$firstname_field], 0, 1);
+            }
+            else {
+              $username =  drupal_substr($edit[$firstname_field][0]['value'], 0, 1);
+            }
+            if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
+              $username .= $edit[$lastname_field];
+            }
+            else {
+              $username .= $edit[$lastname_field][0]['value'];
+            }
+            break;
+
+          case 2:
+            // Create username based on first name, middle name, and last name (e.g., John Jacob Smith).
+            if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
+              $username = $edit[$firstname_field];
+            }
+            else {
+              $username = $edit[$firstname_field][0]['value'];
+            }
+            $username .= ' ';
+            if (!variable_get('realname_registration_use_content_profile_middlename_field', 0)) {
+              if (!empty($edit[$middlename_field])) {
+                $username .= $edit[$middlename_field];
+                $username .= ' ';
+              }
+            }
+            else {
+              if (!empty($edit[$middlename_field][0]['value'])) {
+                $username .= $edit[$middlename_field][0]['value'];
+                $username .= ' ';
+              }
+            }
+            if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
+              $username .= $edit[$lastname_field];
+            }
+            else {
+              $username .= $edit[$lastname_field][0]['value'];
+            }
+            break;
+
+          case 3:
+            // Create username based on first name, middle initial, and last name (e.g., John J Smith).
+            if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
+              $username = $edit[$firstname_field];
+            }
+            else {
+              $username = $edit[$firstname_field][0]['value'];
+            }
+            $username .= ' ';
+            if (!variable_get('realname_registration_use_content_profile_middlename_field', 0)) {
+              if (!empty($edit[$middlename_field])) {
+                $username .= drupal_substr($edit[$middlename_field], 0, 1);
+                $username .= ' ';
+              }
+            }
+            else {
+              if (!empty($edit[$middlename_field][0]['value'])) {
+                $username .= drupal_substr($edit[$middlename_field][0]['value'], 0, 1);
+                $username .= ' ';
+              }
+            }
+            if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
+              $username .= $edit[$lastname_field];
+            }
+            else {
+              $username .= $edit[$lastname_field][0]['value'];
+            }
+            break;
+
+          case 4:
+            // Create username based on first initial, middle initial, and last name (e.g., JJSmith).
+            if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
+              $username = drupal_substr($edit[$firstname_field], 0, 1);
+            }
+            else {
+              $username = drupal_substr($edit[$firstname_field][0]['value'], 0, 1);
+            }
+            if (!variable_get('realname_registration_use_content_profile_middlename_field', 0)) {
+              if (!empty($edit[$middlename_field])) {
+                $username .= drupal_substr($edit[$middlename_field], 0, 1);
+              }
+            }
+            else {
+              if (!empty($edit[$middlename_field][0]['value'])) {
+                $username .= drupal_substr($edit[$middlename_field][0]['value'], 0, 1);
+              }
+            }
+            if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
+              $username .= $edit[$lastname_field];
+            }
+            else {
+              $username .= $edit[$lastname_field][0]['value'];
+            }
+            break;
         }
-        if ((variable_get('realname_registration_format', 0)) == 1) {
-          if ((variable_get('realname_registration_use_content_profile_firstname_field', 0)) == 0) {
-            $username = drupal_substr($edit[$firstname_field], 0, 1);
-          }
-          else {
-            $username =  drupal_substr($edit[$firstname_field][0]['value'], 0, 1);
-          }
-          if ((variable_get('realname_registration_use_content_profile_lastname_field', 0)) == 0) {
-            $username .= $edit[$lastname_field];
-          }
-          else {
-            $username .= $edit[$lastname_field][0]['value'];
-          }
-        }
-        if ((variable_get('realname_registration_format', 0)) == 2) {
-          if ((variable_get('realname_registration_use_content_profile_firstname_field', 0)) == 0) {
-            $username = $edit[$firstname_field];
-          }
-          else {
-            $username = $edit[$firstname_field][0]['value'];
-          }
-          $username .= ' ';
-          if ((variable_get('realname_registration_use_content_profile_middlename_field', 0)) == 0) {
-            if (!empty($edit[$middlename_field])) {
-              $username .= $edit[$middlename_field];
-              $username .= ' ';
-            }
-          }
-          else {
-            if (!empty($edit[$middlename_field][0]['value'])) {
-              $username .= $edit[$middlename_field][0]['value'];
-              $username .= ' ';
-            }
-          }
-          if ((variable_get('realname_registration_use_content_profile_lastname_field', 0)) == 0) {
-            $username .= $edit[$lastname_field];
-          }
-          else {
-            $username .= $edit[$lastname_field][0]['value'];
-          }
-        }
-        if ((variable_get('realname_registration_format', 0)) == 3) {
-          if ((variable_get('realname_registration_use_content_profile_firstname_field', 0)) == 0) {
-            $username = $edit[$firstname_field];
-          }
-          else {
-            $username = $edit[$firstname_field][0]['value'];
-          }
-          $username .= ' ';
-          if ((variable_get('realname_registration_use_content_profile_middlename_field', 0)) == 0) {
-            if (!empty($edit[$middlename_field])) {
-              $username .= drupal_substr($edit[$middlename_field], 0, 1);
-              $username .= ' ';
-            }
-          }
-          else {
-            if (!empty($edit[$middlename_field][0]['value'])) {
-              $username .= drupal_substr($edit[$middlename_field][0]['value'], 0, 1);
-              $username .= ' ';
-            }
-          }
-          if ((variable_get('realname_registration_use_content_profile_lastname_field', 0)) == 0) {
-            $username .= $edit[$lastname_field];
-          }
-          else {
-            $username .= $edit[$lastname_field][0]['value'];
-          }
-        }
-        if ((variable_get('realname_registration_format', 0)) == 4) {
-          if ((variable_get('realname_registration_use_content_profile_firstname_field', 0)) == 0) {
-            $username = drupal_substr($edit[$firstname_field], 0, 1);
-          }
-          else {
-            $username = drupal_substr($edit[$firstname_field][0]['value'], 0, 1);
-          }
-          if ((variable_get('realname_registration_use_content_profile_middlename_field', 0)) == 0) {
-            if (!empty($edit[$middlename_field])) {
-              $username .= drupal_substr($edit[$middlename_field], 0, 1);
-            }
-          }
-          else {
-            if (!empty($edit[$middlename_field][0]['value'])) {
-              $username .= drupal_substr($edit[$middlename_field][0]['value'], 0, 1);
-            }
-          }
-          if ((variable_get('realname_registration_use_content_profile_lastname_field', 0)) == 0) {
-            $username .= $edit[$lastname_field];
-          }
-          else {
-            $username .= $edit[$lastname_field][0]['value'];
-          }
-        }
+
+        // Check if we should force the username to lowercase characters.
         if(variable_get('realname_registration_tolower', 0)) {
           $username = strtolower($username);
         }
@@ -226,7 +257,7 @@ function realname_registration_user($op, &$edit, &$account, $category = NULL) {
 function realname_registration_validate($form, &$form_state) {
   // A first name must be letters, spaces, or hyphens only.
   $firstname_field = variable_get('realname_registration_firstname_field','');
-  if ((variable_get('realname_registration_use_content_profile_firstname_field', 0)) == 0) {
+  if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
     if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i", $form_state['values'][$firstname_field])) {
       form_set_error($firstname_field, t('First name must only contain letters'));
     }
@@ -239,7 +270,7 @@ function realname_registration_validate($form, &$form_state) {
 
   // A middle name must be letters, spaces, or hyphens only.
   $middlename_field = variable_get('realname_registration_middlename_field','');
-  if ((variable_get('realname_registration_use_content_profile_middlename_field', 0)) == 0) {
+  if (!variable_get('realname_registration_use_content_profile_middlename_field', 0)) {
     if (!empty($form_state['values'][$middlename_field])) {
       if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i", $form_state['values'][$middlename_field])) {
         form_set_error($middlename_field, t('Middle name must only contain letters'));
@@ -256,7 +287,7 @@ function realname_registration_validate($form, &$form_state) {
 
   // A last name must be letters, spaces, or hyphens only.
   $lastname_field = variable_get('realname_registration_lastname_field','');
-  if ((variable_get('realname_registration_use_content_profile_lastname_field', 0)) == 0) {
+  if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
     if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i", $form_state['values'][$lastname_field])) {
       form_set_error($lastname_field, t('Last name must only contain letters'));
     }
@@ -318,7 +349,7 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
       }
       if ($account->uid) {
         $firstname_field = variable_get('realname_registration_firstname_field','');
-        if ((variable_get('realname_registration_use_content_profile_firstname_field', 0)) == 0) {
+        if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
           $firstname = db_result(db_query("
              SELECT profile_values.value
              FROM {profile_values}
@@ -342,7 +373,7 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
 
         $middlename_field = variable_get('realname_registration_middlename_field','');
         if (!empty($middlename_field)) {
-          if ((variable_get('realname_registration_use_content_profile_middlename_field', 0)) == 0) {
+          if (!variable_get('realname_registration_use_content_profile_middlename_field', 0)) {
             $middlename = db_result(db_query("
                SELECT profile_values.value
                FROM {profile_values}
@@ -366,7 +397,7 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
         }
 
         $lastname_field = variable_get('realname_registration_lastname_field','');
-        if ((variable_get('realname_registration_use_content_profile_lastname_field', 0)) == 0) {
+        if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
           $lastname = db_result(db_query("
              SELECT profile_values.value
              FROM profile_values
