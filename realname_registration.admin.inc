@@ -14,6 +14,16 @@
 function realname_registration_settings_form() {
   $form = array();
 
+  // If the content_profile module doesn't exist we must make sure these values are reset.
+  if (!module_exists('content_profile_registration')) {
+    variable_set('realname_registration_use_content_profile_firstname_field', 0);
+    variable_set('realname_registration_content_profile_firstname_field_node', 0);
+    variable_set('realname_registration_use_content_profile_middlename_field', 0);
+    variable_set('realname_registration_content_profile_middlename_field_node', 0);
+    variable_set('realname_registration_use_content_profile_lastname_field', 0);
+    variable_set('realname_registration_content_profile_lastname_field_node', 0);
+  }
+  
   $field_req = '<ul><li>'
   . t('The field name is correct and represents an existing profile field') . '</li><li>'
   . t('The field is required and displays on the registration form') . '</li></ul>';
