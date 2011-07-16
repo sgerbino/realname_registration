@@ -12,7 +12,7 @@ function realname_registration_requirements($phase) {
   $t = get_t();
 
   if ($phase == 'runtime') {
-    if (!module_exists('profile') || !module_exists('content_profile_registration')) {
+    if (!module_exists('profile') && !module_exists('content_profile_registration')) {
       $message  = $t('Enable the core module Profile, or ');
       $message .= '<a href="http://drupal.org/project/content_profile">Content profile</a> & Content profile registration ';
       $message .= $t('to utilize Realname registration.');
