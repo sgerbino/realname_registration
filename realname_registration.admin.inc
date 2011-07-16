@@ -14,7 +14,6 @@
 function realname_registration_settings_form() {
   $form = array();
 
-  // If the content_profile module doesn't exist we must make sure these values are reset.
   if (!module_exists('content_profile_registration')) {
     variable_set('realname_registration_use_content_profile_firstname_field', 0);
     variable_set('realname_registration_content_profile_firstname_field_node', 0);
@@ -23,7 +22,7 @@ function realname_registration_settings_form() {
     variable_set('realname_registration_use_content_profile_lastname_field', 0);
     variable_set('realname_registration_content_profile_lastname_field_node', 0);
   }
-  
+
   $field_req = '<ul><li>'
   . t('The field name is correct and represents an existing profile field') . '</li><li>'
   . t('The field is required and displays on the registration form') . '</li></ul>';
@@ -34,6 +33,11 @@ function realname_registration_settings_form() {
     '#required' => TRUE,
     '#default_value' => variable_get('realname_registration_firstname_field', ''),
     '#description' => t('The name of your first name field. Ensure that:') . $field_req,
+  );
+
+  $form['realname_registration_firstname_field_category'] = array(
+    '#type' => 'value',
+    '#value' => variable_get('realname_registration_firstname_field_category', ''),
   );
 
   if (module_exists('content_profile_registration')) {
@@ -58,6 +62,11 @@ function realname_registration_settings_form() {
       . t('The field is displayed on the registration form') . '</li></ul>',
   );
 
+  $form['realname_registration_middlename_field_category'] = array(
+    '#type' => 'value',
+    '#value' => variable_get('realname_registration_middlename_field_category', ''),
+  );
+
   if (module_exists('content_profile_registration')) {
     $form['realname_registration_use_content_profile_middlename_field'] = array(
         '#type' => 'checkbox',
@@ -77,6 +86,11 @@ function realname_registration_settings_form() {
     '#required' => TRUE,
     '#default_value' => variable_get('realname_registration_lastname_field',''),
     '#description' => t('The name of your last name field. Ensure that:') . $field_req,
+  );
+
+  $form['realname_registration_lastname_field_category'] = array(
+    '#type' => 'value',
+    '#value' => variable_get('realname_registration_lastname_field_category', ''),
   );
 
   if (module_exists('content_profile_registration')) {
@@ -141,7 +155,7 @@ function realname_registration_settings_validate($form, &$form_state) {
   
   // Validation for the first name field.
   if ($form_state['values']['realname_registration_use_content_profile_firstname_field'] == 0 ) {
-    $firstname_field = db_fetch_object(db_query("SELECT type, required, register FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_firstname_field']));
+    $firstname_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_firstname_field']));
     if (empty($firstname_field)) {
       form_set_error('realname_registration_firstname_field', $err_pretext . $form_state['values']['realname_registration_firstname_field'] . $err_unknown);
     }
@@ -153,6 +167,9 @@ function realname_registration_settings_validate($form, &$form_state) {
     }
     if ($firstname_field->register != 1) {
       form_set_error('realname_registration_firstname_field', $err_pretext . $form_state['values']['realname_registration_firstname_field'] . $err_register);
+    }
+    if ($firstname_field->category) {
+      $form_state['values']['realname_registration_firstname_field_category'] = $firstname_field->category;
     }
   }
   else {
@@ -187,7 +204,7 @@ function realname_registration_settings_validate($form, &$form_state) {
   // Validation for the middle name field.
   if (!empty($form_state['values']['realname_registration_middlename_field'])) {
     if ($form_state['values']['realname_registration_use_content_profile_middlename_field'] == 0) {
-      $middlename_field = db_fetch_object(db_query("SELECT type, required, register FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_middlename_field']));
+      $middlename_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_middlename_field']));
       if (empty($middlename_field)) {
         form_set_error('realname_registration_middlename_field', $err_pretext . $form_state['values']['realname_registration_middlename_field'] . $err_unknown);
       }
@@ -196,6 +213,9 @@ function realname_registration_settings_validate($form, &$form_state) {
       }
       if ($middlename_field->register != 1) {
         form_set_error('realname_registration_middlename_field', $err_pretext . $form_state['values']['realname_registration_middlename_field'] . $err_register);
+      }
+      if ($middlename_field->category) {
+        $form_state['values']['realname_registration_middlename_field_category'] = $middlename_field->category;
       }
     }
     else {
@@ -227,7 +247,7 @@ function realname_registration_settings_validate($form, &$form_state) {
 
   // Validation for the last name field.
   if ($form_state['values']['realname_registration_use_content_profile_lastname_field'] == 0) {
-    $lastname_field = db_fetch_object(db_query("SELECT type, required, register FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_lastname_field']));
+    $lastname_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_lastname_field']));
     if (empty($lastname_field)) {
       form_set_error('realname_registration_lastname_field', $err_pretext . $form_state['values']['realname_registration_lastname_field'] . $err_unknown);
     }
@@ -239,6 +259,9 @@ function realname_registration_settings_validate($form, &$form_state) {
     }
     if ($lastname_field->register != 1) {
       form_set_error('realname_registration_lastname_field', $err_pretext . $form_state['values']['realname_registration_lastname_field'] . $err_register);
+    }
+    if ($lastname_field->category) {
+      $form_state['values']['realname_registration_lastname_field_category'] = $lastname_field->category;
     }
   }
   else {

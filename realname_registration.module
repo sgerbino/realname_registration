@@ -7,6 +7,7 @@
  * required first name and last name CCK fields on the registration form.
  */
 
+
 /*
  * Implementation of hook_enable().
  */
@@ -35,7 +36,7 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
   $middlename_field = variable_get('realname_registration_middlename_field','');
   $firstname_field = variable_get('realname_registration_firstname_field','');
 
-  if(!empty($lastname_field) && !empty($firstname_field)) {
+  if (!empty($lastname_field) && !empty($firstname_field)) {
     // First, we must hide the Username field from the registration form.
     if (isset($form['account']) && is_array($form['account'])) {
       $form['account']['name']['#type'] = 'hidden';
@@ -48,15 +49,25 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
 
     // We must bring the name fields up so that they show at the top of the form.
     if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
-      $form[$firstname_field]['#weight'] = -500;
+      if (variable_get('realname_registration_firstname_field_category', '')) {
+        $form[variable_get('realname_registration_firstname_field_category', '')][$firstname_field]['#weight'] = -500;
+      }
+      else {
+        $form[$firstname_field]['#weight'] = -500;
+      }
     }
     else {
       $form['#field_info'][$firstname_field]['widget']['weight'] = -500;
     }
 
     if (!variable_get('realname_registration_use_content_profile_middlename_field', 0)) {
-      if(!empty($middlename_field)) {
-        $form[$middlename_field]['#weight'] = -499;
+      if (!empty($middlename_field)) {
+        if (variable_get('realname_registration_middlename_field_category', '')) {
+          $form[variable_get('realname_registration_middlename_field_category', '')][$middlename_field]['#weight'] = -499;
+        }
+        else {
+          $form[$middlename_field]['#weight'] = -499;
+        }
       }
     }
     else {
@@ -66,7 +77,12 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
     }
 
     if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
-      $form[$lastname_field]['#weight'] = -498;
+      if (variable_get('realname_registration_lastname_field_category', '')) {
+        $form[variable_get('realname_registration_lastname_field_category', '')][$lastname_field]['#weight'] = -498;
+      }
+      else {
+        $form[$lastname_field]['#weight'] = -498;
+      }
     }
     else {
       $form['#field_info'][$lastname_field]['widget']['weight'] = -498;
