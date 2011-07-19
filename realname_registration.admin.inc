@@ -14,6 +14,15 @@
 function realname_registration_settings_form() {
   $form = array();
 
+  if (!module_exists('profile2')) {
+    variable_set('realname_registration_use_profile2_firstname_field', FALSE);
+    variable_set('realname_registration_profile2_firstname_field_profile_name', '');
+    variable_set('realname_registration_use_profile2_middlename_field', FALSE);
+    variable_set('realname_registration_profile2_middlename_field_profile_name', '');
+    variable_set('realname_registration_use_profile2_lastname_field', FALSE);
+    variable_set('realname_registration_profile2_lastname_field_profile_name', '');
+  }
+
   $field_req = '
 <ul>
   <li>' . t('The field name is correct and represents an existing field') . '</li>
@@ -30,6 +39,19 @@ function realname_registration_settings_form() {
     '#required' => TRUE,
   );
 
+  if (module_exists('profile2')) {
+    $form['realname_registration_use_profile2_firstname_field'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Use the profile2 module to store your first names.'),
+        '#default_value' => variable_get('realname_registration_use_profile2_firstname_field'),
+        '#description' => t('When this checkbox is checked, Realname registration will use profile2 fields to store first names.'),
+    );
+    $form['realname_registration_profile2_firstname_field_profile_name'] = array(
+      '#type' => 'value',
+      '#value' => variable_get('realname_registration_profile2_firstname_field_profile_name'),
+    );
+  }
+
   $form['realname_registration_middlename_field'] = array(
     '#type' => 'textfield',
     '#title' => t('Middle name field'),
@@ -42,6 +64,19 @@ function realname_registration_settings_form() {
       . '</ul>',
   );
 
+  if (module_exists('profile2')) {
+    $form['realname_registration_use_profile2_middlename_field'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Use the profile2 module to store your middle names.'),
+        '#default_value' => variable_get('realname_registration_use_profile2_middlename_field'),
+        '#description' => t('When this checkbox is checked, Realname registration will use profile2 fields to store middle names.'),
+    );
+    $form['realname_registration_profile2_middlename_field_profile_name'] = array(
+      '#type' => 'value',
+      '#value' => variable_get('realname_registration_profile2_middlename_field_profile_name'),
+    );
+  }
+
   $form['realname_registration_lastname_field'] = array(
     '#type' => 'textfield',
     '#title' => t('Last name field'),
@@ -49,6 +84,19 @@ function realname_registration_settings_form() {
     '#description' => t('The name of your last name field. Ensure that:') . $field_req,
     '#required' => TRUE,
   );
+
+  if (module_exists('profile2')) {
+    $form['realname_registration_use_profile2_lastname_field'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Use the profile2 module to store your last names.'),
+        '#default_value' => variable_get('realname_registration_use_profile2_lastname_field'),
+        '#description' => t('When this checkbox is checked, Realname registration will use profile2 fields to store last names.'),
+    );
+    $form['realname_registration_profile2_lastname_field_profile_name'] = array(
+      '#type' => 'value',
+      '#value' => variable_get('realname_registration_profile2_lastname_field_profile_name'),
+    );
+  }
 
   $form['realname_registration_format'] = array(
     '#type' => 'radios',
@@ -68,21 +116,21 @@ function realname_registration_settings_form() {
   $form['realname_registration_ucfirst'] = array(
     '#type' => 'checkbox',
     '#title' => t('Force the first letters of the first and last names to uppercase'),
-    '#default_value' => variable_get('realname_registration_ucfirst', 1),
+    '#default_value' => variable_get('realname_registration_ucfirst', TRUE),
     '#description' => t('Ensures that the first letter of the users first name and first letter of the users last name are capitalized.'),
   );
 
   $form['realname_registration_tolower'] = array(
     '#type' => 'checkbox',
     '#title' => t('Force lowercase'),
-    '#default_value' => variable_get('realname_registration_tolower'),
+    '#default_value' => variable_get('realname_registration_tolower', TRUE),
     '#description' => t('Usernames will be created using only lowercase characters.'),
   );
 
   $form['realname_registration_use_validation'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use Realname registration validation'),
-    '#default_value' => variable_get('realname_registration_use_validation', 1),
+    '#default_value' => variable_get('realname_registration_use_validation', TRUE),
     '#description' => t('Use regex to validate real names (/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i)'),
   );
 
@@ -95,9 +143,33 @@ function realname_registration_settings_validate($form, &$form_state) {
   $err_req = '</em>, ' . t("you've provided must be required.");
   $err_unknown = '</em>, ' . t("you've provided either does not exist or is not associated with the user entity and bundle.");
   $err_textfield = '</em>, ' . t('must use textfield widget.');
+  $err_register = '</em>, ' . t('must be displayed on the registration form.');
 
   // Validate the first name field.
-  $firstname_instance = field_info_instance('user', $form_state['values']['realname_registration_firstname_field'], 'user');
+  if ($form_state['values']['realname_registration_use_profile2_firstname_field']) {
+    $firstname_field = field_info_field($form_state['values']['realname_registration_firstname_field']);
+    $match = FALSE;
+    foreach (profile2_get_types() as $type_name => $profile_type) {
+      if (!empty($profile_type->data['registration'])) {
+        foreach ($firstname_field['bundles']['profile2'] as $key => $value) {
+          if ($value == $profile_type->type) {
+            $match = TRUE;
+            variable_set('realname_registration_profile2_firstname_field_profile_name', $value);
+          }
+        }
+      }
+    }
+    if (!$match) {
+      form_set_error('realname_registration_firstname_field', $err_pretext . $form_state['values']['realname_registration_firstname_field'] . $err_register );
+    }
+  }
+
+  if($form_state['values']['realname_registration_use_profile2_firstname_field']) {
+    $firstname_instance = field_info_instance('profile2', $form_state['values']['realname_registration_firstname_field'], variable_get('realname_registration_profile2_firstname_field_profile_name'));
+  }
+  else {
+    $firstname_instance = field_info_instance('user', $form_state['values']['realname_registration_firstname_field'], 'user');
+  }
   if (!isset($firstname_instance)) {
     form_set_error('realname_registration_firstname_field', $err_pretext . $form_state['values']['realname_registration_firstname_field'] . $err_unknown);
   }
@@ -109,8 +181,31 @@ function realname_registration_settings_validate($form, &$form_state) {
   }
 
   // Validate the middle name field if it is used.
+  if ($form_state['values']['realname_registration_use_profile2_middlename_field']) {
+    $middlename_field = field_info_field($form_state['values']['realname_registration_middlename_field']);
+    $match = FALSE;
+    foreach (profile2_get_types() as $type_name => $profile_type) {
+      if (!empty($profile_type->data['registration'])) {
+        foreach ($firstname_field['bundles']['profile2'] as $key => $value) {
+          if ($value == $profile_type->type) {
+            $match = TRUE;
+            variable_set('realname_registration_profile2_middlename_field_profile_name', $value);
+          }
+        }
+      }
+    }
+    if (!$match) {
+      form_set_error('realname_registration_middlename_field', $err_pretext . $form_state['values']['realname_registration_middlename_field'] . $err_register);
+    }
+  }
+
   if (!empty($form_state['values']['realname_registration_middlename_field'])) {
-    $middlename_instance = field_info_instance('user', $form_state['values']['realname_registration_middlename_field'], 'user');
+    if($form_state['values']['realname_registration_use_profile2_middlename_field']) {
+      $middlename_instance = field_info_instance('profile2', $form_state['values']['realname_registration_middlename_field'], variable_get('realname_registration_profile2_middlename_field_profile_name'));
+    }
+    else {
+      $middlename_instance = field_info_instance('user', $form_state['values']['realname_registration_middlename_field'], 'user');
+    }
     if (!isset($middlename_instance)) {
       form_set_error('realname_registration_middlename_field', $err_pretext . $form_state['values']['realname_registration_middlename_field'] . $err_unknown);
     }
@@ -126,7 +221,30 @@ function realname_registration_settings_validate($form, &$form_state) {
   }
 
   // Validate the last name field.
-  $lastname_instance = field_info_instance('user', $form_state['values']['realname_registration_lastname_field'], 'user');
+  if ($form_state['values']['realname_registration_use_profile2_lastname_field']) {
+    $lastname_field = field_info_field($form_state['values']['realname_registration_lastname_field']);
+    $match = FALSE;
+    foreach (profile2_get_types() as $type_name => $profile_type) {
+      if (!empty($profile_type->data['registration'])) {
+        foreach ($firstname_field['bundles']['profile2'] as $key => $value) {
+          if ($value == $profile_type->type) {
+            $match = TRUE;
+            variable_set('realname_registration_profile2_lastname_field_profile_name', $value);
+          }
+        }
+      }
+    }
+    if (!$match) {
+      form_set_error('realname_registration_lastname_field', $err_pretext . $form_state['values']['realname_registration_lastname_field'] . $err_register);
+    }
+  }
+
+  if ($form_state['values']['realname_registration_use_profile2_lastname_field']) {
+    $lastname_instance = field_info_instance('profile2', $form_state['values']['realname_registration_lastname_field'], variable_get('realname_registration_profile2_lastname_field_profile_name'));
+  }
+  else {
+    $lastname_instance = field_info_instance('user', $form_state['values']['realname_registration_lastname_field'], 'user');
+  }
   if (!isset($lastname_instance)) {
     form_set_error('realname_registration_lastname_field', $err_pretext . $form_state['values']['realname_registration_lastname_field'] . $err_unknown);
   }

@@ -1,7 +1,6 @@
 name = Realname registration 
-description = "For generating usernames based on first name and last name."
+description = "For generating usernames based on real names."
 core = 7.x
-dependencies[] = token
 files[] = realname_registration.module
 files[] = realname_registration.install
 files[] = realname_registration.admin.inc
