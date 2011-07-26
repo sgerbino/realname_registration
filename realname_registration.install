@@ -5,29 +5,6 @@
 */
 
 /**
- * Implementation of hook_requirements().
- */
-function realname_registration_requirements($phase) {
-  $requirements = array();
-  $t = get_t();
-
-  if ($phase == 'runtime') {
-    if (!module_exists('profile') && !module_exists('profile2')) {
-      $message  = $t('Enable the core module Profile, or ');
-      $message .= '<a href="http://drupal.org/project/profile2">Profile2</a> ';
-      $message .= $t('to utilize Realname registration.');
-      $requirements['realname_registration'] = array(
-        'title' => $t('Realname registration'), 
-        'value' => $message, 
-        'severity' => REQUIREMENT_ERROR,
-      );
-    }
-  }
-
- return $requirements;
-}
-
-/**
  * Implementation of hook_install().
  */
 function realname_registration_install() {
