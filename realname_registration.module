@@ -7,24 +7,6 @@
  * required first name and last name fields on the registration form.
  */
 
-
-/*
- * Implementation of hook_enable().
- */
-function realname_registration_enable() {
-  if (module_exists('profile') || module_exists('profile2')) {
-    $success  = t('Realname registration has been successfully enabled. ');
-    $success .= t('Please procede to the module configuration page.');
-    drupal_set_message($success, 'status');
-  }
-  else {
-    $error  = t('Realname registration requires that you enable the Profile or Profile2 module. ');
-    $error .= t('Please enable one of the depedent modules before re-enabling Realname registration');
-    drupal_set_message($error, 'error');
-    module_disable(array( 0 => 'realname_registration' ));
-  }
-}
-
 /**
  * Implement hook_help().
  */
