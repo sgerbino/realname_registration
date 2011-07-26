@@ -7,6 +7,16 @@
  * required first name and last name fields on the registration form.
  */
 
+
+/*
+ * Implementation of hook_enable().
+ */
+function realname_registration_enable() {
+  $success  = t('Realname registration has been successfully enabled. ');
+  $success .= t('Please procede to the module configuration page.');
+  drupal_set_message($success, 'status');
+}
+
 /**
  * Implement hook_help().
  */
