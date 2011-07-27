@@ -26,12 +26,26 @@ function realname_registration_settings_form() {
   $field_req = '
 <ul>
   <li>' . t('The field name is correct and represents an existing field') . '</li>
-  <li>' . t('The field is associated with the') . ' <em>' . t('user') . '</em> ' . t('entity') . '</li>
+  <li>' . t('The field is associated with the') . ' <em>' . t('user or profile2') . '</em> ' . t('entity') . '</li>
   <li>' . t('The field is required and displays on the registration form') . '</li>
 </ul>
 ';
 
-  $form['realname_registration_firstname_field'] = array(
+  $form['fields'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Realname registration fields'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['fields']['firstname'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('First name field'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['fields']['firstname']['realname_registration_firstname_field'] = array(
     '#type' => 'textfield',
     '#title' => t('First name field'),
     '#default_value' => variable_get('realname_registration_firstname_field'),
@@ -40,21 +54,35 @@ function realname_registration_settings_form() {
   );
 
   if (module_exists('profile2')) {
-    $form['realname_registration_use_profile2_firstname_field'] = array(
+    $form['fields']['firstname']['profile2_firstname'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Profile2 first name'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+
+    $form['fields']['firstname']['profile2_firstname']['realname_registration_use_profile2_firstname_field'] = array(
         '#type' => 'checkbox',
         '#title' => t('Use the profile2 module to store your first names.'),
         '#default_value' => variable_get('realname_registration_use_profile2_firstname_field'),
         '#description' => t('When this checkbox is checked, Realname registration will use profile2 fields to store first names.'),
     );
-    $form['realname_registration_profile2_firstname_field_profile_name'] = array(
+    $form['fields']['firstname']['profile2_firstname']['realname_registration_profile2_firstname_field_profile_name'] = array(
       '#type' => 'textfield',
       '#title' => t('Profile2 type'),
       '#default_value' => variable_get('realname_registration_profile2_firstname_field_profile_name'),
-      '#description' => t('Provide the profile2 machine name that will be used during registration.'),
+      '#description' => t('Provide the profile2 type that will be used during registration.'),
     );
   }
 
-  $form['realname_registration_middlename_field'] = array(
+  $form['fields']['middlename'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Middle name field'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['fields']['middlename']['realname_registration_middlename_field'] = array(
     '#type' => 'textfield',
     '#title' => t('Middle name field'),
     '#default_value' => variable_get('realname_registration_middlename_field'),
@@ -67,21 +95,34 @@ function realname_registration_settings_form() {
   );
 
   if (module_exists('profile2')) {
-    $form['realname_registration_use_profile2_middlename_field'] = array(
+    $form['fields']['middlename']['profile2_middlename'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Profile2 middle name'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+    $form['fields']['middlename']['profile2_middlename']['realname_registration_use_profile2_middlename_field'] = array(
         '#type' => 'checkbox',
         '#title' => t('Use the profile2 module to store your middle names.'),
         '#default_value' => variable_get('realname_registration_use_profile2_middlename_field'),
         '#description' => t('When this checkbox is checked, Realname registration will use profile2 fields to store middle names.'),
     );
-    $form['realname_registration_profile2_middlename_field_profile_name'] = array(
+    $form['fields']['middlename']['profile2_middlename']['realname_registration_profile2_middlename_field_profile_name'] = array(
       '#type' => 'textfield',
       '#title' => t('Profile2 type'),
       '#default_value' => variable_get('realname_registration_profile2_middlename_field_profile_name'),
-      '#description' => t('Provide the profile2 machine name that will be used during registration.'),
+      '#description' => t('Provide the profile2 type that will be used during registration.'),
     );
   }
 
-  $form['realname_registration_lastname_field'] = array(
+  $form['fields']['lastname'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Middle name field'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['fields']['lastname']['realname_registration_lastname_field'] = array(
     '#type' => 'textfield',
     '#title' => t('Last name field'),
     '#default_value' => variable_get('realname_registration_lastname_field'),
@@ -90,21 +131,42 @@ function realname_registration_settings_form() {
   );
 
   if (module_exists('profile2')) {
-    $form['realname_registration_use_profile2_lastname_field'] = array(
+    $form['fields']['lastname']['profile2_lastname'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Profile2 last name'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+
+    $form['fields']['lastname']['profile2_lastname']['realname_registration_use_profile2_lastname_field'] = array(
         '#type' => 'checkbox',
         '#title' => t('Use the profile2 module to store your last names.'),
         '#default_value' => variable_get('realname_registration_use_profile2_lastname_field'),
         '#description' => t('When this checkbox is checked, Realname registration will use profile2 fields to store last names.'),
     );
-    $form['realname_registration_profile2_lastname_field_profile_name'] = array(
+    $form['fields']['lastname']['profile2_lastname']['realname_registration_profile2_lastname_field_profile_name'] = array(
       '#type' => 'textfield',
       '#title' => t('Profile2 type'),
       '#default_value' => variable_get('realname_registration_profile2_lastname_field_profile_name'),
-      '#description' => t('Provide the profile2 machine name that will be used during registration.'),
+      '#description' => t('Provide the profile2 type that will be used during registration.'),
     );
   }
 
-  $form['realname_registration_format'] = array(
+  $form['fields']['realname_registration_ucfirst'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Force the first letters of the first and last names to uppercase'),
+    '#default_value' => variable_get('realname_registration_ucfirst', TRUE),
+    '#description' => t('Ensures that the first letter of the users first name, middle name, and last name are capitalized.'),
+  );
+
+  $form['username_format'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Realname registration username creation'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['username_format']['realname_registration_format'] = array(
     '#type' => 'radios',
     '#title' => t('Username format'),
     '#description' => t('Select the format in which Realname registration will create new usernames.'),
@@ -119,21 +181,14 @@ function realname_registration_settings_form() {
     '#required' => TRUE,
   );
 
-  $form['realname_registration_ucfirst'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Force the first letters of the first and last names to uppercase'),
-    '#default_value' => variable_get('realname_registration_ucfirst', TRUE),
-    '#description' => t('Ensures that the first letter of the users first name and first letter of the users last name are capitalized.'),
-  );
-
-  $form['realname_registration_tolower'] = array(
+  $form['username_format']['realname_registration_tolower'] = array(
     '#type' => 'checkbox',
     '#title' => t('Force lowercase'),
     '#default_value' => variable_get('realname_registration_tolower', TRUE),
     '#description' => t('Usernames will be created using only lowercase characters.'),
   );
 
-  $form['realname_registration_use_validation'] = array(
+  $form['username_format']['realname_registration_use_validation'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use Realname registration validation'),
     '#default_value' => variable_get('realname_registration_use_validation', TRUE),
@@ -147,7 +202,7 @@ function realname_registration_settings_form() {
 function realname_registration_settings_validate($form, &$form_state) {
   $err_pretext = t('The field name') . ', <em>';
   $err_req = '</em>, ' . t("you've provided must be required.");
-  $err_unknown = '</em>, ' . t("you've provided either does not exist or is not associated with the user entity and bundle.");
+  $err_unknown = '</em>, ' . t("you've provided either does not exist or is not associated with the corresponding entity.");
   $err_textfield = '</em>, ' . t('must use textfield widget.');
   $err_register = '</em>, ' . t('must be displayed on the registration form.');
 
