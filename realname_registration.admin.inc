@@ -71,7 +71,7 @@ function realname_registration_settings_form() {
       '#type' => 'textfield',
       '#title' => t('Profile2 type'),
       '#default_value' => variable_get('realname_registration_profile2_firstname_field_profile_name'),
-      '#description' => t('Provide the profile2 type that will be used during registration.'),
+      '#description' => t('Provide the profile2 machine name that will be used during registration.'),
     );
   }
 
@@ -111,7 +111,7 @@ function realname_registration_settings_form() {
       '#type' => 'textfield',
       '#title' => t('Profile2 type'),
       '#default_value' => variable_get('realname_registration_profile2_middlename_field_profile_name'),
-      '#description' => t('Provide the profile2 type that will be used during registration.'),
+      '#description' => t('Provide the profile2 machine name that will be used during registration.'),
     );
   }
 
@@ -148,7 +148,7 @@ function realname_registration_settings_form() {
       '#type' => 'textfield',
       '#title' => t('Profile2 type'),
       '#default_value' => variable_get('realname_registration_profile2_lastname_field_profile_name'),
-      '#description' => t('Provide the profile2 type that will be used during registration.'),
+      '#description' => t('Provide the profile2 machine name that will be used during registration.'),
     );
   }
 
