@@ -288,7 +288,6 @@ function realname_registration_settings_validate($form, &$form_state) {
         foreach ($firstname_field['bundles']['profile2'] as $key => $value) {
           if ($value == $profile_type->type) {
             $match = TRUE;
-            variable_set('realname_registration_profile2_lastname_field_profile_name', $value);
           }
         }
       }
