@@ -27,7 +27,21 @@ function realname_registration_settings_form() {
   . t('The field name is correct and represents an existing profile field') . '</li><li>'
   . t('The field is required and displays on the registration form') . '</li></ul>';
 
-  $form['realname_registration_firstname_field'] = array(
+  $form['fields'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Realname registration fields'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['fields']['firstname'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('First name field'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['fields']['firstname']['realname_registration_firstname_field'] = array(
     '#type' => 'textfield',
     '#title' => t('First name field'),
     '#required' => TRUE,
@@ -35,25 +49,40 @@ function realname_registration_settings_form() {
     '#description' => t('The name of your first name field. Ensure that:') . $field_req,
   );
 
-  $form['realname_registration_firstname_field_category'] = array(
+  $form['fields']['firstname']['realname_registration_firstname_field_category'] = array(
     '#type' => 'value',
     '#value' => variable_get('realname_registration_firstname_field_category', ''),
   );
 
   if (module_exists('content_profile_registration')) {
-    $form['realname_registration_use_content_profile_firstname_field'] = array(
+    $form['fields']['firstname']['content_profile_firstname'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Content profile first name'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+    $form['fields']['firstname']['content_profile_firstname']['realname_registration_use_content_profile_firstname_field'] = array(
         '#type' => 'checkbox',
         '#title' => t('Use the content profile module to store your first names.'),
         '#default_value' => variable_get('realname_registration_use_content_profile_firstname_field', 0),
         '#description' => t('When this checkbox is checked, Realname registration will use content profile fields to store first names.'),
     );
-    $form['realname_registration_content_profile_firstname_field_node'] = array(
-      '#type' => 'value',
-      '#value' => variable_get('realname_registration_content_profile_firstname_field_node', ''),
+    $form['fields']['firstname']['content_profile_firstname']['realname_registration_content_profile_firstname_field_node'] = array(
+      '#title' => t('Content profile type'),
+      '#type' => 'textfield',
+      '#default_value' => variable_get('realname_registration_content_profile_firstname_field_node', ''),
+      '#description' => t('Please provide the machine name of the Content profile you wish for Realname registration to use.'),
     );
   }
 
-  $form['realname_registration_middlename_field'] = array(
+  $form['fields']['middlename'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Middle name field'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['fields']['middlename']['realname_registration_middlename_field'] = array(
     '#type' => 'textfield',
     '#title' => t('Middle name field'),
     '#default_value' => variable_get('realname_registration_middlename_field', ''),
@@ -62,25 +91,38 @@ function realname_registration_settings_form() {
       . t('The field is displayed on the registration form') . '</li></ul>',
   );
 
-  $form['realname_registration_middlename_field_category'] = array(
+  $form['fields']['middlename']['realname_registration_middlename_field_category'] = array(
     '#type' => 'value',
     '#value' => variable_get('realname_registration_middlename_field_category', ''),
   );
 
   if (module_exists('content_profile_registration')) {
-    $form['realname_registration_use_content_profile_middlename_field'] = array(
+    $form['fields']['middlename']['content_profile_middlename'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Content profile middle name'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+    $form['fields']['middlename']['content_profile_middlename']['realname_registration_use_content_profile_middlename_field'] = array(
         '#type' => 'checkbox',
         '#title' => t('Use the content profile module to store your middle names.'),
         '#default_value' => variable_get('realname_registration_use_content_profile_middlename_field', 0),
         '#description' => t('When this checkbox is checked, Realname registration will use content profile fields to store middle names.'),
     );
-    $form['realname_registration_content_profile_middlename_field_node'] = array(
-      '#type' => 'value',
-      '#value' => variable_get('realname_registration_content_profile_middlename_field_node', ''),
+    $form['fields']['middlename']['content_profile_middlename']['realname_registration_content_profile_middlename_field_node'] = array(
+      '#title' => t('Content profile type'),
+      '#type' => 'textfield',
+      '#default_value' => variable_get('realname_registration_content_profile_middlename_field_node', ''),
+      '#description' => t('Please provide the machine name of the Content profile you wish for Realname registration to use.'),
     );
   }
-
-  $form['realname_registration_lastname_field'] = array(
+  $form['fields']['lastname'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Last name field'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+  $form['fields']['lastname']['realname_registration_lastname_field'] = array(
     '#type' => 'textfield',
     '#title' => t('Last name field'),
     '#required' => TRUE,
@@ -88,25 +130,47 @@ function realname_registration_settings_form() {
     '#description' => t('The name of your last name field. Ensure that:') . $field_req,
   );
 
-  $form['realname_registration_lastname_field_category'] = array(
+  $form['fields']['lastname']['realname_registration_lastname_field_category'] = array(
     '#type' => 'value',
     '#value' => variable_get('realname_registration_lastname_field_category', ''),
   );
 
   if (module_exists('content_profile_registration')) {
-    $form['realname_registration_use_content_profile_lastname_field'] = array(
+    $form['fields']['lastname']['content_profile_lastname'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Content profile last name'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+    $form['fields']['lastname']['content_profile_lastname']['realname_registration_use_content_profile_lastname_field'] = array(
         '#type' => 'checkbox',
         '#title' => t('Use the content profile module to store your last names.'),
         '#default_value' => variable_get('realname_registration_use_content_profile_lastname_field', 0),
         '#description' => t('When this checkbox is checked, Realname registration will use content profile fields to store last names.'),
     );
-    $form['realname_registration_content_profile_lastname_field_node'] = array(
-      '#type' => 'value',
-      '#value' => variable_get('realname_registration_content_profile_lastname_field_node', ''),
+    $form['fields']['lastname']['content_profile_lastname']['realname_registration_content_profile_lastname_field_node'] = array(
+      '#title' => t('Content profile type'),
+      '#type' => 'textfield',
+      '#default_value' => variable_get('realname_registration_content_profile_lastname_field_node', ''),
+      '#description' => t('Please provide the machine name of the Content profile you wish for Realname registration to use.'),
     );
   }
 
-  $form['realname_registration_format'] = array(
+  $form['fields']['realname_registration_ucfirst'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Force the first letters of the first and last names to uppercase'),
+    '#default_value' => variable_get('realname_registration_ucfirst', 1),
+    '#description' => t("Ensures that the first letter of the users first name, middle name, and last name are capitalized."),
+  );
+
+  $form['username_format'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Realname registration username creation'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['username_format']['realname_registration_format'] = array(
     '#type' => 'radios',
     '#title' => t('Username format'),
     '#description' => t('Select the format in which Realname registration will create new usernames.'),
@@ -121,21 +185,14 @@ function realname_registration_settings_form() {
     '#required' => TRUE,
   );
 
-  $form['realname_registration_ucfirst'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Force the first letters of the first and last names to uppercase'),
-    '#default_value' => variable_get('realname_registration_ucfirst', 1),
-    '#description' => t("Ensures that the first letter of the users first name, middle name, and last name are capitalized."),
-  );
-
-  $form['realname_registration_tolower'] = array(
+  $form['username_format']['realname_registration_tolower'] = array(
     '#type' => 'checkbox',
     '#title' => t('Force lowercase'),
     '#default_value' => variable_get('realname_registration_tolower', 1),
     '#description' => t("Usernames will be created using only lowercase characters."),
   );
 
-  $form['realname_registration_use_validation'] = array(
+  $form['username_format']['realname_registration_use_validation'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use Realname registration validation'),
     '#default_value' => variable_get('realname_registration_use_validation', 1),
@@ -154,7 +211,7 @@ function realname_registration_settings_validate($form, &$form_state) {
   $err_textfield = '</em>, ' . t('must use textfield widget.');
   
   // Validation for the first name field.
-  if ($form_state['values']['realname_registration_use_content_profile_firstname_field'] == 0 ) {
+  if (!($form_state['values']['realname_registration_use_content_profile_firstname_field'])) {
     $firstname_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_firstname_field']));
     if (empty($firstname_field)) {
       form_set_error('realname_registration_firstname_field', $err_pretext . $form_state['values']['realname_registration_firstname_field'] . $err_unknown);
@@ -193,7 +250,6 @@ function realname_registration_settings_validate($form, &$form_state) {
     foreach ($types as $type) {
       if ($type == $firstname_field->type_name) {
         $match = TRUE;
-        $form_state['values']['realname_registration_content_profile_firstname_field_node'] = $type;
       }
     }
     if (!$match) {
@@ -203,7 +259,7 @@ function realname_registration_settings_validate($form, &$form_state) {
   
   // Validation for the middle name field.
   if (!empty($form_state['values']['realname_registration_middlename_field'])) {
-    if ($form_state['values']['realname_registration_use_content_profile_middlename_field'] == 0) {
+    if (!($form_state['values']['realname_registration_use_content_profile_middlename_field'])) {
       $middlename_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_middlename_field']));
       if (empty($middlename_field)) {
         form_set_error('realname_registration_middlename_field', $err_pretext . $form_state['values']['realname_registration_middlename_field'] . $err_unknown);
@@ -236,7 +292,6 @@ function realname_registration_settings_validate($form, &$form_state) {
       foreach ($types as $type) {
         if ($type == $middlename_field->type_name) {
           $match = TRUE;
-          $form_state['values']['realname_registration_content_profile_middlename_field_node'] = $type;
         }
       }
       if (!$match) {
@@ -246,7 +301,7 @@ function realname_registration_settings_validate($form, &$form_state) {
   }
 
   // Validation for the last name field.
-  if ($form_state['values']['realname_registration_use_content_profile_lastname_field'] == 0) {
+  if (!($form_state['values']['realname_registration_use_content_profile_lastname_field'])) {
     $lastname_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_lastname_field']));
     if (empty($lastname_field)) {
       form_set_error('realname_registration_lastname_field', $err_pretext . $form_state['values']['realname_registration_lastname_field'] . $err_unknown);
@@ -285,7 +340,6 @@ function realname_registration_settings_validate($form, &$form_state) {
     foreach ($types as $type) {
       if ($type == $lastname_field->type_name) {
         $match = TRUE;
-        $form_state['values']['realname_registration_content_profile_lastname_field_node'] = $type;
       }
     }
     if (!$match) {
