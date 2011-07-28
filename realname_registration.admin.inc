@@ -200,11 +200,23 @@ function realname_registration_settings_form() {
 }
 
 function realname_registration_settings_validate($form, &$form_state) {
-  $err_pretext = t('The field name') . ', <em>';
-  $err_req = '</em>, ' . t("you've provided must be required.");
-  $err_unknown = '</em>, ' . t("you've provided either does not exist or is not associated with the corresponding entity.");
-  $err_textfield = '</em>, ' . t('must use textfield widget.');
-  $err_register = '</em>, ' . t('must be displayed on the registration form.');
+  $err_pretext      = t('The field name') . ', <em>';
+  $err_req          = '</em>, ' . t("you've provided must be required.");
+  $err_unknown      = '</em>, ' . t("you've provided either does not exist or is not associated with the corresponding entity.");
+  $err_textfield    = '</em>, ' . t('must use textfield widget.');
+  $err_register     = '</em>, ' . t('must be displayed on the registration form.') . '<em>';
+  $err_profile2_req = t("You must specify a profile2 machine name for the field, ") . '<em>';
+
+  // If we are told to use profile2 fields to store values, we need to know which profile2 type.
+  if ($form_state['values']['realname_registration_use_profile2_firstname_field'] && empty($form_state['values']['realname_registration_profile2_firstname_field_profile_name'])) {
+    form_set_error('realname_registration_profile2_firstname_field_profile_name', $err_profile2_req . $form_state['values']['realname_registration_firstname_field'] . '</em>');
+  }
+  if ($form_state['values']['realname_registration_use_profile2_middlename_field'] && empty($form_state['values']['realname_registration_profile2_middlename_field_profile_name'])) {
+    form_set_error('realname_registration_profile2_middlename_field_profile_name', $err_profile2_req . $form_state['values']['realname_registration_middlename_field'] . '</em>');
+  }
+  if ($form_state['values']['realname_registration_use_profile2_lastname_field'] && empty($form_state['values']['realname_registration_profile2_lastname_field_profile_name'])) {
+    form_set_error('realname_registration_profile2_lastname_field_profile_name', $err_profile2_req. $form_state['values']['realname_registration_firstname_field']  . '</em>');
+  }
 
   // Validate the first name field.
   if ($form_state['values']['realname_registration_use_profile2_firstname_field']) {
@@ -246,7 +258,7 @@ function realname_registration_settings_validate($form, &$form_state) {
     $match = FALSE;
     foreach (profile2_get_types() as $type_name => $profile_type) {
       if ($profile_type->data['registration']) {
-        foreach ($firstname_field['bundles']['profile2'] as $key => $value) {
+        foreach ($middlename_field['bundles']['profile2'] as $key => $value) {
           if ($value == $profile_type->type) {
             $match = TRUE;
           }
@@ -285,7 +297,7 @@ function realname_registration_settings_validate($form, &$form_state) {
     $match = FALSE;
     foreach (profile2_get_types() as $type_name => $profile_type) {
       if ($profile_type->data['registration']) {
-        foreach ($firstname_field['bundles']['profile2'] as $key => $value) {
+        foreach ($lastname_field['bundles']['profile2'] as $key => $value) {
           if ($value == $profile_type->type) {
             $match = TRUE;
           }
