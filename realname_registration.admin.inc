@@ -209,7 +209,19 @@ function realname_registration_settings_validate($form, &$form_state) {
   $err_req = '</em>, ' . t("you've provided must be required.");
   $err_unknown = '</em>, ' . t("you've provided either does not exist or is not a profile field.");
   $err_textfield = '</em>, ' . t('must use textfield widget.');
+  $err_content_profile_req = t("You must specify a content profile machine name for the field, ") . '<em>';
   
+  // If we are told to use content profile fields to store values, we need to know which content profile node type.
+  if ($form_state['values']['realname_registration_use_content_profile_firstname_field'] && empty($form_state['values']['realname_registration_content_profile_firstname_field_node'])) {
+    form_set_error('realname_registration_content_profile_firstname_field_node', $err_content_profile_req . $form_state['values']['realname_registration_firstname_field'] . '</em>');
+  }
+  if ($form_state['values']['realname_registration_use_content_profile_middlename_field'] && empty($form_state['values']['realname_registration_content_profile_middlename_field_node'])) {
+    form_set_error('realname_registration_content_profile_middlename_field_node', $err_content_profile_req . $form_state['values']['realname_registration_middlename_field'] . '</em>');
+  }
+  if ($form_state['values']['realname_registration_use_content_profile_lastname_field'] && empty($form_state['values']['realname_registration_content_profile_lastname_field_node'])) {
+    form_set_error('realname_registration_content_profile_lastname_field_node', $err_content_profile_req . $form_state['values']['realname_registration_lastname_field'] . '</em>');
+  }
+
   // Validation for the first name field.
   if (!($form_state['values']['realname_registration_use_content_profile_firstname_field'])) {
     $firstname_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_firstname_field']));
