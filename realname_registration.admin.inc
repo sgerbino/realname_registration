@@ -192,7 +192,7 @@ function realname_registration_settings_form() {
     '#type' => 'checkbox',
     '#title' => t('Use Realname registration validation'),
     '#default_value' => variable_get('realname_registration_use_validation', TRUE),
-    '#description' => t('Use regex to validate real names (/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i)'),
+    '#description' => t('Use regex to validate real names.'),
   );
 
   $form['#validate'][] = 'realname_registration_settings_validate';
