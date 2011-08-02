@@ -256,44 +256,49 @@ function realname_registration_user_presave(&$edit, $account, $category) {
  * @see user_register_submit()
  */
 function realname_registration_validate($form, &$form_state) {
-  // A first name must be letters only.
+  // A first name may not contain symbols or numbers.
   $firstname_field = variable_get('realname_registration_firstname_field');
   if (variable_get('realname_registration_use_profile2_firstname_field')) {
-    if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i", $form_state['input']['profile_' . variable_get('realname_registration_profile2_firstname_field_profile_name') ][$firstname_field]['und'][0]['value'])) {
-      form_set_error($firstname_field, t('First name must only contain letters.'));
+    if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['input']['profile_'
+      . variable_get('realname_registration_profile2_firstname_field_profile_name') ][$firstname_field]['und'][0]['value'])) {
+      form_set_error($firstname_field, t('First name may not contain symbols or numbers.'));
     }
   }
   else {
-    if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i", $form_state['values'][$firstname_field]['und'][0]['value'])) {
-      form_set_error($firstname_field, t('First name must only contain letters.'));
+    if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['values'][$firstname_field]['und'][0]['value'])) {
+      form_set_error($firstname_field, t('First name may not contain symbols or numbers.'));
     }
   }
 
-  // A middle name must be letters only.
+  // A middle name may not contain symbols or numbers.
   $middlename_field = variable_get('realname_registration_middlename_field');
-  if (!empty($form_state['values'][$middlename_field]['und'][0]['value'])) {
-    if (variable_get('realname_registration_use_profile2_middlename_field')) {
-      if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i", $form_state['input']['profile_' . variable_get('realname_registration_profile2_middlename_field_profile_name') ][$middlename_field]['und'][0]['value'])) {
-        form_set_error($middlename_field, t('Middle name must only contain letters.'));
+  if (variable_get('realname_registration_use_profile2_middlename_field')) {
+    if (!empty($form_state['input']['profile_' . variable_get('realname_registration_profile2_middlename_field_profile_name') ][$middlename_field]['und'][0]['value'])) {
+      if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['input']['profile_'
+        . variable_get('realname_registration_profile2_middlename_field_profile_name') ][$middlename_field]['und'][0]['value'])) {
+        form_set_error($middlename_field, t('Middle name may not contain symbols or numbers.'));
       }
     }
-    else {
-      if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i", $form_state['values'][$middlename_field]['und'][0]['value'])) {
-        form_set_error($middlename_field, t('Middle name must only contain letters.'));
+  }
+  else {
+    if (!empty($form_state['values'][$middlename_field]['und'][0]['value'])) {
+      if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['values'][$middlename_field]['und'][0]['value'])) {
+        form_set_error($middlename_field, t('Middle name may not contain symbols or numbers.'));
       }
     }
   }
 
-  // A last name must be letters only.
+  // A last name may not contain symbols or numbers.
   $lastname_field = variable_get('realname_registration_lastname_field');
   if (variable_get('realname_registration_use_profile2_lastname_field')) {
-    if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i", $form_state['input']['profile_' . variable_get('realname_registration_profile2_lastname_field_profile_name') ][$lastname_field]['und'][0]['value'])) {
-      form_set_error($lastname_field, t('Last name must only contain letters.'));
+    if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['input']['profile_'
+      . variable_get('realname_registration_profile2_lastname_field_profile_name') ][$lastname_field]['und'][0]['value'])) {
+      form_set_error($lastname_field, t('Last name may not contain symbols or numbers.'));
     }
   }
   else {
-    if (!preg_match("/^[A-ZÀ-ÖØ-öø-ÿ -]+$/i", $form_state['values'][$lastname_field]['und'][0]['value'])) {
-      form_set_error($lastname_field, t('Last name must only contain letters.'));
+    if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['values'][$lastname_field]['und'][0]['value'])) {
+      form_set_error($lastname_field, t('Last name may not contain symbols or numbers.'));
     }
   }
 }
