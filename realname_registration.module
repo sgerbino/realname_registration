@@ -62,6 +62,7 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
     $form['name']['#value'] = 'unset_username';
   }
 
+  $form['#validate'][] = 'realname_registration_mandatory_validate';
   if (variable_get('realname_registration_use_validation')) {
     $form['#validate'][] = 'realname_registration_validate';
   }
@@ -247,7 +248,6 @@ function realname_registration_user_presave(&$edit, $account, $category) {
     }
   }
 }
-  
 
 /**
  * Form validation handler for user_register_form().
@@ -299,6 +299,81 @@ function realname_registration_validate($form, &$form_state) {
   else {
     if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['values'][$lastname_field]['und'][0]['value'])) {
       form_set_error($lastname_field, t('Last name may not contain symbols or numbers.'));
+    }
+  }
+}
+
+/**
+ * Form validation handler for user_register_form().
+ *
+ * @see user_register_form()
+ * @see user_register_submit()
+ */
+function realname_registration_mandatory_validate($form, &$form_state) {
+  // A first name may not begin or end with a space.
+  $firstname_field = variable_get('realname_registration_firstname_field');
+  if (variable_get('realname_registration_use_profile2_firstname_field')) {
+    if (preg_match("/^\\s+(.*)$/", $form_state['input']['profile_'
+      . variable_get('realname_registration_profile2_firstname_field_profile_name') ][$firstname_field]['und'][0]['value'])) {
+      form_set_error($firstname_field, t('First name may not begin with a space.'));
+    }
+    if (preg_match("/^(.*)\\s+$/", $form_state['input']['profile_'
+      . variable_get('realname_registration_profile2_firstname_field_profile_name') ][$firstname_field]['und'][0]['value'])) {
+      form_set_error($firstname_field, t('First name may not end with a space.'));
+    }
+  }
+  else {
+    if (preg_match("/^\\s+(.*)$/", $form_state['values'][$firstname_field]['und'][0]['value'])) {
+      form_set_error($firstname_field, t('First name may not begin with a space.'));
+    }
+    if (preg_match("/^(.*)\\s+$/", $form_state['values'][$firstname_field]['und'][0]['value'])) {
+      form_set_error($firstname_field, t('First name may not end with a space.'));
+    }
+  }
+
+  // A middle name may not begin or end with a space.
+  $middlename_field = variable_get('realname_registration_middlename_field');
+  if (variable_get('realname_registration_use_profile2_middlename_field')) {
+    if (!empty($form_state['input']['profile_' . variable_get('realname_registration_profile2_middlename_field_profile_name') ][$middlename_field]['und'][0]['value'])) {
+      if (preg_match("/^\\s+(.*)$/", $form_state['input']['profile_'
+        . variable_get('realname_registration_profile2_middlename_field_profile_name') ][$middlename_field]['und'][0]['value'])) {
+        form_set_error($middlename_field, t('Middle name may not begin with a space.'));
+      }
+      if (preg_match("/^(.*)\\s+$/", $form_state['input']['profile_'
+        . variable_get('realname_registration_profile2_middlename_field_profile_name') ][$middlename_field]['und'][0]['value'])) {
+        form_set_error($middlename_field, t('Middle name may not end with a space.'));
+      }
+    }
+  }
+  else {
+    if (!empty($form_state['values'][$middlename_field]['und'][0]['value'])) {
+      if (preg_match("/^\\s+(.*)$/", $form_state['values'][$middlename_field]['und'][0]['value'])) {
+        form_set_error($middlename_field, t('Middle name may not begin with a space.'));
+      }
+      if (preg_match("/^(.*)\\s+$/", $form_state['values'][$middlename_field]['und'][0]['value'])) {
+        form_set_error($middlename_field, t('Middle name may not end with a space.'));
+      }
+    }
+  }
+
+  // A last name may not begin or end with a space.
+  $lastname_field = variable_get('realname_registration_lastname_field');
+  if (variable_get('realname_registration_use_profile2_lastname_field')) {
+    if (preg_match("/^\\s+(.*)$/", $form_state['input']['profile_'
+      . variable_get('realname_registration_profile2_lastname_field_profile_name') ][$lastname_field]['und'][0]['value'])) {
+      form_set_error($lastname_field, t('Last name may not begin with a space.'));
+    }
+    if (preg_match("/^(.*)\\s+$/", $form_state['input']['profile_'
+      . variable_get('realname_registration_profile2_lastname_field_profile_name') ][$lastname_field]['und'][0]['value'])) {
+      form_set_error($lastname_field, t('Last name may not end with a space.'));
+    }
+  }
+  else {
+    if (preg_match("/^\\s+(.*)$/", $form_state['values'][$lastname_field]['und'][0]['value'])) {
+      form_set_error($lastname_field, t('Last name may not begin with a space.'));
+    }
+    if (preg_match("/^(.*)\\s+$/", $form_state['values'][$lastname_field]['und'][0]['value'])) {
+      form_set_error($lastname_field, t('Last name may not end with a space.'));
     }
   }
 }
