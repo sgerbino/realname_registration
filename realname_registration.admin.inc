@@ -228,7 +228,7 @@ function realname_registration_settings_validate($form, &$form_state) {
     $firstname_field = field_info_field($form_state['values']['realname_registration_firstname_field']);
     $match = FALSE;
     foreach (profile2_get_types() as $type_name => $profile_type) {
-      if ($profile_type->data['registration']) {
+      if ($profile_type->data['registration'] && is_array($firstname_field['bundles']['profile2'])) {
         foreach ($firstname_field['bundles']['profile2'] as $key => $value) {
           if ($value == $profile_type->type) {
             $match = TRUE;
@@ -262,7 +262,7 @@ function realname_registration_settings_validate($form, &$form_state) {
     $middlename_field = field_info_field($form_state['values']['realname_registration_middlename_field']);
     $match = FALSE;
     foreach (profile2_get_types() as $type_name => $profile_type) {
-      if ($profile_type->data['registration']) {
+      if ($profile_type->data['registration'] && is_array($middlename_field['bundles']['profile2'])) {
         foreach ($middlename_field['bundles']['profile2'] as $key => $value) {
           if ($value == $profile_type->type) {
             $match = TRUE;
@@ -301,7 +301,7 @@ function realname_registration_settings_validate($form, &$form_state) {
     $lastname_field = field_info_field($form_state['values']['realname_registration_lastname_field']);
     $match = FALSE;
     foreach (profile2_get_types() as $type_name => $profile_type) {
-      if ($profile_type->data['registration']) {
+      if ($profile_type->data['registration'] && is_array($lastname_field['bundles']['profile2'])) {
         foreach ($lastname_field['bundles']['profile2'] as $key => $value) {
           if ($value == $profile_type->type) {
             $match = TRUE;
