@@ -13,7 +13,7 @@
  */
 function realname_registration_enable() {
   $success  = t('Realname registration has been enabled. ');
-  $success .= t('Please visit the') . ' <a href="admin/config/people/realname_registration">' . t('configuration page') . '</a>.';
+  $success .= t('Please visit the') . ' <a href="config/people/realname_registration">' . t('configuration page') . '</a>.';
   drupal_set_message($success, 'status');
 }
 
