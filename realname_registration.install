@@ -33,3 +33,26 @@ function realname_registration_requirements($phase) {
 function realname_registration_install() {
   db_query("UPDATE {system} SET weight = 10 WHERE name = 'realname_registration'");
 }
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function realname_registration_uninstall() {
+  variable_del('realname_registration_use_content_profile_firstname_field');
+  variable_del('realname_registration_content_profile_firstname_field_node');
+  variable_del('realname_registration_use_content_profile_middlename_field');
+  variable_del('realname_registration_content_profile_middlename_field_node');
+  variable_del('realname_registration_use_content_profile_lastname_field');
+  variable_del('realname_registration_content_profile_lastname_field_node');
+
+  variable_del('realname_registration_firstname_field');
+  variable_del('realname_registration_firstname_field_category');
+  variable_del('realname_registration_middlename_field');
+  variable_del('realname_registration_middlename_field_category');
+  variable_del('realname_registration_lastname_field');
+  variable_del('realname_registration_lastname_field_category');
+  variable_del('realname_registration_ucfirst');
+  variable_del('realname_registration_format');
+  variable_del('realname_registration_tolower');
+  variable_del('realname_registration_use_validation');
+}

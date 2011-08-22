@@ -15,12 +15,12 @@ function realname_registration_settings_form() {
   $form = array();
 
   if (!module_exists('content_profile_registration')) {
-    variable_set('realname_registration_use_content_profile_firstname_field', 0);
-    variable_set('realname_registration_content_profile_firstname_field_node', 0);
-    variable_set('realname_registration_use_content_profile_middlename_field', 0);
-    variable_set('realname_registration_content_profile_middlename_field_node', 0);
-    variable_set('realname_registration_use_content_profile_lastname_field', 0);
-    variable_set('realname_registration_content_profile_lastname_field_node', 0);
+    variable_del('realname_registration_use_content_profile_firstname_field');
+    variable_del('realname_registration_content_profile_firstname_field_node');
+    variable_del('realname_registration_use_content_profile_middlename_field');
+    variable_del('realname_registration_content_profile_middlename_field_node');
+    variable_del('realname_registration_use_content_profile_lastname_field');
+    variable_del('realname_registration_content_profile_lastname_field_node');
   }
 
   $field_req = '<ul><li>'
@@ -180,7 +180,10 @@ function realname_registration_settings_form() {
       t('First initial and last name (e.g., JSmith)'),
       t('First name, middle name, and last name (e.g., John Jacob Smith)'),
       t('First name, middle initial, and last name (e.g., John J Smith)'),
-      t('First initial, middle initial, and last name (e.g., JJSmith)')
+      t('First initial, middle initial, and last name (e.g., JJSmith)'),
+      t('First name and last name without spaces (e.g., JohnSmith)'),
+      t('First name, middle name, and last name without spaces (e.g., JohnJacobSmith)'),
+      t('First name, middle initial, and last name without spaces (e.g., JohnJSmith)')
     ),
     '#required' => TRUE,
   );
