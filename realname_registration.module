@@ -71,7 +71,7 @@ function realname_registration_help($path, $arg) {
  * Implementation of hook_form_alter().
  */
 function realname_registration_form_alter(&$form, $form_state, $form_id) {
-  if (!($form_id == 'user_register') || ($form['#action'] == '/admin/user/user/create')) {
+  if (!($form_id == 'user_register') || ($form['#action'] == base_path() . 'admin/user/user/create')) {
     return;
   }
 
