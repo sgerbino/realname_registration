@@ -15,12 +15,12 @@ function realname_registration_settings_form() {
   $form = array();
 
   if (!module_exists('profile2')) {
-    variable_set('realname_registration_use_profile2_firstname_field', FALSE);
-    variable_set('realname_registration_profile2_firstname_field_profile_name', '');
-    variable_set('realname_registration_use_profile2_middlename_field', FALSE);
-    variable_set('realname_registration_profile2_middlename_field_profile_name', '');
-    variable_set('realname_registration_use_profile2_lastname_field', FALSE);
-    variable_set('realname_registration_profile2_lastname_field_profile_name', '');
+    variable_del('realname_registration_use_profile2_firstname_field');
+    variable_del('realname_registration_profile2_firstname_field_profile_name');
+    variable_del('realname_registration_use_profile2_middlename_field');
+    variable_del('realname_registration_profile2_middlename_field_profile_name');
+    variable_del('realname_registration_use_profile2_lastname_field');
+    variable_del('realname_registration_profile2_lastname_field_profile_name');
   }
 
   $field_req = '
@@ -117,7 +117,7 @@ function realname_registration_settings_form() {
 
   $form['fields']['lastname'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Middle name field'),
+    '#title' => t('Last name field'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
   );
@@ -176,7 +176,10 @@ function realname_registration_settings_form() {
       t('First initial and last name (e.g., JSmith)'),
       t('First name, middle name, and last name (e.g., John Jacob Smith)'),
       t('First name, middle initial, and last name (e.g., John J Smith)'),
-      t('First initial, middle initial, and last name (e.g., JJSmith)')
+      t('First initial, middle initial, and last name (e.g., JJSmith)'),
+      t('First name and last name without spaces (e.g., JohnSmith)'),
+      t('First name, middle name, and last name without spaces (e.g., JohnJacobSmith)'),
+      t('First name, middle initial, and last name without spaces (e.g., JohnJSmith)')
     ),
     '#required' => TRUE,
   );
