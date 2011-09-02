@@ -374,7 +374,7 @@ function realname_registration_validate($form, &$form_state) {
   }
 
   // A last name may not contain symbols or numbers.
-  $lastname_field = variable_get('realname_registration_lastname_field','');
+  $lastname_field = variable_get('realname_registration_lastname_field', '');
   if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
     if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['values'][$lastname_field])) {
       form_set_error($lastname_field, t('Last name may not contain symbols or numbers.'));
