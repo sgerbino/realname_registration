@@ -206,9 +206,9 @@ function realname_registration_settings_validate($form, &$form_state) {
   $err_pretext      = t('The field name') . ', <em>';
   $err_req          = '</em>, ' . t("you've provided must be required.");
   $err_unknown      = '</em>, ' . t("you've provided either does not exist or is not associated with the corresponding entity.");
-  $err_textfield    = '</em>, ' . t('must use textfield widget.');
-  $err_register     = '</em>, ' . t('must be displayed on the registration form.') . '<em>';
-  $err_profile2_req = t("You must specify a profile2 machine name for the field, ") . '<em>';
+  $err_textfield    = '</em>, ' . t("must use textfield widget.");
+  $err_register     = '</em>, ' . t("must be displayed on the registration form.") . '<em>';
+  $err_profile2_req = t("You must specify a profile2 machine name for the field,") . ' <em>';
 
   // If we are told to use profile2 fields to store values, we need to know which profile2 type.
   if (module_exists('profile2')) {
@@ -219,7 +219,7 @@ function realname_registration_settings_validate($form, &$form_state) {
       form_set_error('realname_registration_profile2_middlename_field_profile_name', $err_profile2_req . $form_state['values']['realname_registration_middlename_field'] . '</em>');
     }
     if ($form_state['values']['realname_registration_use_profile2_lastname_field'] && empty($form_state['values']['realname_registration_profile2_lastname_field_profile_name'])) {
-      form_set_error('realname_registration_profile2_lastname_field_profile_name', $err_profile2_req. $form_state['values']['realname_registration_firstname_field']  . '</em>');
+      form_set_error('realname_registration_profile2_lastname_field_profile_name', $err_profile2_req . $form_state['values']['realname_registration_firstname_field'] . '</em>');
     }
   }
 
@@ -241,7 +241,7 @@ function realname_registration_settings_validate($form, &$form_state) {
     }
   }
 
-  if(module_exists('profile2') && $form_state['values']['realname_registration_use_profile2_firstname_field']) {
+  if (module_exists('profile2') && $form_state['values']['realname_registration_use_profile2_firstname_field']) {
     $firstname_instance = field_info_instance('profile2', $form_state['values']['realname_registration_firstname_field'], $form_state['values']['realname_registration_profile2_firstname_field_profile_name']);
   }
   else {
@@ -276,7 +276,7 @@ function realname_registration_settings_validate($form, &$form_state) {
   }
 
   if (!empty($form_state['values']['realname_registration_middlename_field'])) {
-    if(module_exists('profile2') && $form_state['values']['realname_registration_use_profile2_middlename_field']) {
+    if (module_exists('profile2') && $form_state['values']['realname_registration_use_profile2_middlename_field']) {
       $middlename_instance = field_info_instance('profile2', $form_state['values']['realname_registration_middlename_field'], $form_state['values']['realname_registration_profile2_middlename_field_profile_name']);
     }
     else {
