@@ -154,7 +154,7 @@ function realname_registration_settings_form() {
 
   $form['fields']['realname_registration_ucfirst'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Force the first letters of the first and last names to uppercase'),
+    '#title' => t('Force the first letters of the first, middle, and last names to uppercase'),
     '#default_value' => variable_get('realname_registration_ucfirst', TRUE),
     '#description' => t('Ensures that the first letter of the users first name, middle name, and last name are capitalized.'),
   );
