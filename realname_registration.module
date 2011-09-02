@@ -13,12 +13,12 @@
  */
 function realname_registration_enable() {
   if (module_exists('profile') || module_exists('content_profile_registration')) {
-    $success  = t('Realname registration has been successfully enabled. ');
-    $success .= t('Please procede to the <a href="../user/realname_registration">module configuration page</a>.');
+    $success  = t('Realname registration has been successfully enabled.');
+    $success .= t('Please proceed to the <a href="../user/realname_registration">module configuration page</a>.');
     drupal_set_message($success, 'status');
   }
   else {
-    $error  = t('Realname registration requires that you enable the Profile module or Content profile registration. ');
+    $error  = t('Realname registration requires that you enable the Profile module or Content profile registration.');
     $error .= t('Please enable one of the depedent modules before re-enabling Realname registration');
     drupal_set_message($error, 'error');
     module_disable(array( 0 => 'realname_registration' ));
