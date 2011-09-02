@@ -61,10 +61,20 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
               foreach ($result as $record) {
                 $profile2_firstname = profile2_load($record->pid);
               }
-              $replacements[$original] = !empty($profile2_firstname->$field_firstname) ? $profile2_firstname->{$field_firstname}['und']['0']['value'] : '';
+              if (!empty($profile2_firstname->$field_firstname)) {
+                $replacements[$original] = $sanitize ? check_plain($profile2_firstname->{$field_firstname}['und']['0']['value']) : $profile2_firstname->{$field_firstname}['und']['0']['value'];
+              }
+              else {
+                $replacements[$original] =  '';
+              }
             }
             else {
-              $replacements[$original] = !empty($account->$field_firstname) ? $account->{$field_firstname}['und']['0']['value'] : '';
+              if (!empty($account->$field_firstname)) {
+                $replacements[$original] = $sanitize ? check_plain($account->{$field_firstname}['und']['0']['value']) : $account->{$field_firstname}['und']['0']['value'];
+              }
+              else {
+                $replacements[$original] = '';
+              }
             }
             break;
 
@@ -74,10 +84,20 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
               foreach ($result as $record) {
                 $profile2_middlename = profile2_load($record->pid);
               }
-              $replacements[$original] = !empty($profile2_middlename->$field_middlename) ? $profile2_middlename->{$field_middlename}['und']['0']['value'] : '';
+              if (!empty($profile2_middlename->$field_middlename)) {
+                $replacements[$original] = $sanitize ? check_plain($profile2_middlename->{$field_middlename}['und']['0']['value']) : $profile2_middlename->{$field_middlename}['und']['0']['value'];
+              }
+              else {
+                $replacements[$original] = '';
+              }
             }
             else {
-              $replacements[$original] = !empty($account->$field_middlename) ? $account->{$field_middlename}['und']['0']['value'] : '';
+              if (!empty($account->$field_middlename)) {
+                $replacements[$original] = $sanitize ? check_plain($account->{$field_middlename}['und']['0']['value']) : $account->{$field_middlename}['und']['0']['value'];
+              }
+              else {
+                $replacements[$original] = '';
+              }
             }
             break;
 
@@ -87,10 +107,20 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
               foreach ($result as $record) {
                 $profile2_lastname = profile2_load($record->pid);
               }
-              $replacements[$original] = !empty($profile2_lastname->$field_lastname) ? $profile2_lastname->{$field_lastname}['und']['0']['value'] : '';
+              if (!empty($profile2_lastname->$field_lastname)) {
+                $replacements[$original] = $sanitize ? check_plain($profile2_lastname->{$field_lastname}['und']['0']['value']) : $profile2_lastname->{$field_lastname}['und']['0']['value'];
+              }
+              else {
+                $replacements[$original] = '';
+              }
             }
             else {
-              $replacements[$original] = !empty($account->$field_lastname) ? $account->{$field_lastname}['und']['0']['value'] : '';
+              if (!empty($account->$field_lastname)) {
+                $replacements[$original] = $sanitize ? check_plain($account->{$field_lastname}['und']['0']['value']) : $account->{$field_lastname}['und']['0']['value'];
+              }
+              else {
+                $replacements[$original] = '';
+              }
             }
             break;
 
@@ -100,10 +130,22 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
               foreach ($result as $record) {
                 $profile2_firstname = profile2_load($record->pid);
               }
-              $replacements[$original] = !empty($profile2_firstname->$field_firstname) ? drupal_substr($profile2_firstname->{$field_firstname}['und']['0']['value'], 0, 1) : '';
+              if (!empty($profile2_firstname->$field_firstname)) {
+                $replacements[$original] = $sanitize ?
+                  check_plain(drupal_substr($profile2_firstname->{$field_firstname}['und']['0']['value'], 0, 1)) : drupal_substr($profile2_firstname->{$field_firstname}['und']['0']['value'], 0, 1);
+              }
+              else {
+                $replacements[$original] = '';
+              }
             }
             else {
-              $replacements[$original] = !empty($account->$field_firstname) ? drupal_substr($account->{$field_firstname}['und']['0']['value'], 0, 1) : '';
+              if (!empty($account->$field_firstname)) {
+                $replacements[$original] = $sanitize ?
+                  check_plain(drupal_substr($account->{$field_firstname}['und']['0']['value'], 0, 1)) : drupal_substr($account->{$field_firstname}['und']['0']['value'], 0, 1);
+              }
+              else {
+                $replacements[$original] = '';
+              }
             }
             break;
 
@@ -113,10 +155,22 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
               foreach ($result as $record) {
                 $profile2_middlename = profile2_load($record->pid);
               }
-              $replacements[$original] = !empty($profile2_middlename->$field_middlename) ? drupal_substr($profile2_middlename->{$field_middlename}['und']['0']['value'], 0, 1) : '';
+              if (!empty($profile2_middlename->$field_middlename)) {
+                $replacements[$original] = $sanitize ?
+                  check_plain(drupal_substr($profile2_middlename->{$field_middlename}['und']['0']['value'], 0, 1)) : drupal_substr($profile2_middlename->{$field_middlename}['und']['0']['value'], 0, 1);
+              }
+              else {
+                $replacements[$original] = '';
+              }
             }
             else {
-              $replacements[$original] = !empty($account->$field_middlename) ? drupal_substr($account->{$field_middlename}['und']['0']['value'], 0, 1) : '';
+              if (!empty($account->$field_middlename)) {
+                $replacements[$original] = $sanitize ?
+                  check_plain(drupal_substr($account->{$field_middlename}['und']['0']['value'], 0, 1)) : drupal_substr($account->{$field_middlename}['und']['0']['value'], 0, 1);
+              }
+              else {
+                $replacements[$original] = '';
+              }
             }
             break;
 
@@ -126,10 +180,22 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
               foreach ($result as $record) {
                 $profile2_lastname = profile2_load($record->pid);
               }
-              $replacements[$original] = !empty($profile2_lastname->$field_lastname) ? drupal_substr($profile2_lastname->{$field_lastname}['und']['0']['value'], 0, 1) : '';
+              if (!empty($profile2_lastname->$field_lastname)) {
+                $replacements[$original] = $sanitize ?
+                  check_plain(drupal_substr($profile2_lastname->{$field_lastname}['und']['0']['value'], 0, 1)) : drupal_substr($profile2_lastname->{$field_lastname}['und']['0']['value'], 0, 1);
+              }
+              else {
+                $replacements[$original] = '';
+              }
             }
             else {
-              $replacements[$original] = !empty($account->$field_lastname) ? drupal_substr($account->{$field_lastname}['und']['0']['value'], 0, 1) : '';
+              if (!empty($account->$field_lastname)) {
+                $replacements[$original] = $sanitize ?
+                  check_plain(drupal_substr($account->{$field_lastname}['und']['0']['value'], 0, 1)) : drupal_substr($account->{$field_lastname}['und']['0']['value'], 0, 1);
+              }
+              else {
+                $replacements[$original] = '';
+              }
             }
             break;
         }
