@@ -106,7 +106,7 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
               $replacements[$original] = !empty($account->$field_firstname) ? drupal_substr($account->{$field_firstname}['und']['0']['value'], 0, 1) : '';
             }
             break;
- 
+
           case 'middle-initial':
             if (variable_get('realname_registration_use_profile2_middlename_field')) {
               $result = db_query('SELECT p.pid FROM {profile} AS p WHERE p.uid = :uid AND p.type = :type', array(':uid' => $account->uid, ':type' => $field_middlename_profile_type));
@@ -137,9 +137,5 @@ function realname_registration_tokens($type, $tokens, array $data = array(), arr
     }
   }
 
-  if ($type == 'current-user') {
-    $account = user_load($GLOBALS['user']->uid);
-    $replacements += token_generate('user', $tokens, array('user' => $account), $options);
-  }
   return $replacements;
 }
