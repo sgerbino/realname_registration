@@ -516,6 +516,13 @@ function realname_registration_token_list($type = 'all') {
     $tokens['user']['first-initial']   = t("The first initial of the user.");
     $tokens['user']['middle-initial']  = t("The middle initial of the user.");
     $tokens['user']['last-initial']    = t("The last initial of the user.");
+
+    $tokens['user']['first-name-raw']      = t("The first name of the user.");
+    $tokens['user']['middle-name-raw']     = t("The middle name of the user.");
+    $tokens['user']['last-name-raw']       = t("The last name of the user.");
+    $tokens['user']['first-initial-raw']   = t("The first initial of the user.");
+    $tokens['user']['middle-initial-raw']  = t("The middle initial of the user.");
+    $tokens['user']['last-initial-raw']    = t("The last initial of the user.");
     return $tokens;
   }
 }
@@ -605,12 +612,19 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
             ", $account->uid, variable_get('realname_registration_content_profile_lastname_field_node', '')));
         }
         
-        $values['first-name']     = !empty($firstname) ? $firstname : '';
-        $values['last-name']      = !empty($lastname) ? $lastname : '';
-        $values['middle-name']    = !empty($middlename) ? $middlename : '';
-        $values['first-initial']  = !empty($firstname) ? drupal_substr($firstname, 0, 1) : '';
-        $values['middle-initial'] = !empty($middlename) ? drupal_substr($middlename, 0, 1) : '';
-        $values['last-initial']   = !empty($lastname) ? drupal_substr($lastname, 0, 1) : '';
+        $values['first-name']     = !empty($firstname)  ? check_plain($firstname) : '';
+        $values['last-name']      = !empty($lastname)   ? check_plain($lastname) : '';
+        $values['middle-name']    = !empty($middlename) ? check_plain($middlename) : '';
+        $values['first-initial']  = !empty($firstname)  ? check_plain(drupal_substr($firstname, 0, 1)) : '';
+        $values['middle-initial'] = !empty($middlename) ? check_plain(drupal_substr($middlename, 0, 1)) : '';
+        $values['last-initial']   = !empty($lastname)   ? check_plain(drupal_substr($lastname, 0, 1)) : '';
+
+        $values['first-name-raw']     = !empty($firstname)  ? $firstname : '';
+        $values['last-name-raw']      = !empty($lastname)   ? $lastname : '';
+        $values['middle-name-raw']    = !empty($middlename) ? $middlename : '';
+        $values['first-initial-raw']  = !empty($firstname)  ? drupal_substr($firstname, 0, 1) : '';
+        $values['middle-initial-raw'] = !empty($middlename) ? drupal_substr($middlename, 0, 1) : '';
+        $values['last-initial-raw']   = !empty($lastname)   ? drupal_substr($lastname, 0, 1) : '';
       }
       break;
   }
