@@ -87,7 +87,7 @@ function realname_registration_form_alter(&$form, $form_state, $form_id) {
   }
   $form['#validate'][] = 'realname_registration_mandatory_validate';
   // If the user has chosen regex validation, add the validation handler.
-  if(variable_get('realname_registration_use_validation','')) {
+  if (variable_get('realname_registration_use_validation', '')) {
     $form['#validate'][] = 'realname_registration_validate';
   }
 }
@@ -127,7 +127,7 @@ function realname_registration_user($op, &$edit, &$account, $category = NULL) {
         }
 
         // Generate the username based on first name and last name fields.
-        switch(variable_get('realname_registration_format', 0)) {
+        switch (variable_get('realname_registration_format', 0)) {
           case 0:
             // Create username based on first name and last name (e.g., John Smith).
             if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
@@ -318,7 +318,7 @@ function realname_registration_user($op, &$edit, &$account, $category = NULL) {
         }
 
         // Check if we should force the username to lowercase characters.
-        if(variable_get('realname_registration_tolower', 0)) {
+        if (variable_get('realname_registration_tolower', 0)) {
           $username = strtolower($username);
         }
 
@@ -342,7 +342,7 @@ function realname_registration_user($op, &$edit, &$account, $category = NULL) {
  */
 function realname_registration_validate($form, &$form_state) {
   // A first name may not contain symbols or numbers.
-  $firstname_field = variable_get('realname_registration_firstname_field','');
+  $firstname_field = variable_get('realname_registration_firstname_field', '');
   if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
     if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['values'][$firstname_field])) {
       form_set_error($firstname_field, t('First name may not contain symbols or numbers.'));
@@ -356,7 +356,7 @@ function realname_registration_validate($form, &$form_state) {
   }
 
   // A middle name may not contain symbols or numbers.
-  $middlename_field = variable_get('realname_registration_middlename_field','');
+  $middlename_field = variable_get('realname_registration_middlename_field', '');
   if (!variable_get('realname_registration_use_content_profile_middlename_field', 0)) {
     if (!empty($form_state['values'][$middlename_field])) {
       if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['values'][$middlename_field])) {
@@ -396,7 +396,7 @@ function realname_registration_validate($form, &$form_state) {
  */
 function realname_registration_mandatory_validate($form, &$form_state) {
   // A first name may not contain symbols or numbers.
-  $firstname_field = variable_get('realname_registration_firstname_field','');
+  $firstname_field = variable_get('realname_registration_firstname_field', '');
   if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
     if (preg_match("/^\\s+(.*)$/", $form_state['values'][$firstname_field])) {
       form_set_error($firstname_field, t('First name cannot begin with a space.'));
@@ -424,7 +424,7 @@ function realname_registration_mandatory_validate($form, &$form_state) {
   }
 
   // A middle name may not contain symbols or numbers.
-  $middlename_field = variable_get('realname_registration_middlename_field','');
+  $middlename_field = variable_get('realname_registration_middlename_field', '');
   if (!variable_get('realname_registration_use_content_profile_middlename_field', 0)) {
     if (!empty($form_state['values'][$middlename_field])) {
       if (preg_match("/^\\s+(.*)$/", $form_state['values'][$middlename_field])) {
@@ -456,7 +456,7 @@ function realname_registration_mandatory_validate($form, &$form_state) {
   }
 
   // A last name may not contain symbols or numbers.
-  $lastname_field = variable_get('realname_registration_lastname_field','');
+  $lastname_field = variable_get('realname_registration_lastname_field', '');
   if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
     if (preg_match("/^\\s+(.*)$/", $form_state['values'][$lastname_field])) {
       form_set_error($lastname_field, t('Last name cannot begin with a space.'));
@@ -541,7 +541,7 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
         $account = user_load(array('uid' => $GLOBALS['user']->uid));
       }
       if ($account->uid) {
-        $firstname_field = variable_get('realname_registration_firstname_field','');
+        $firstname_field = variable_get('realname_registration_firstname_field', '');
         if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
           $firstname = db_result(db_query("
              SELECT profile_values.value
@@ -564,7 +564,7 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
             ", $account->uid, variable_get('realname_registration_content_profile_firstname_field_node', '')));
         }
 
-        $middlename_field = variable_get('realname_registration_middlename_field','');
+        $middlename_field = variable_get('realname_registration_middlename_field', '');
         if (!empty($middlename_field)) {
           if (!variable_get('realname_registration_use_content_profile_middlename_field', 0)) {
             $middlename = db_result(db_query("
@@ -589,7 +589,7 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
           }
         }
 
-        $lastname_field = variable_get('realname_registration_lastname_field','');
+        $lastname_field = variable_get('realname_registration_lastname_field', '');
         if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
           $lastname = db_result(db_query("
              SELECT profile_values.value

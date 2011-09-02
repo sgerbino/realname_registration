@@ -126,7 +126,7 @@ function realname_registration_settings_form() {
     '#type' => 'textfield',
     '#title' => t('Last name field'),
     '#required' => TRUE,
-    '#default_value' => variable_get('realname_registration_lastname_field',''),
+    '#default_value' => variable_get('realname_registration_lastname_field', ''),
     '#description' => t('The name of your last name field. Ensure that:') . $field_req,
   );
 
