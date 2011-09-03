@@ -13,12 +13,12 @@
  */
 function realname_registration_enable() {
   if (module_exists('profile') || module_exists('content_profile_registration')) {
-    $success  = t('Realname registration has been successfully enabled.');
+    $success  = t('Realname registration has been successfully enabled.') . ' ';
     $success .= t('Please proceed to the <a href="../user/realname_registration">module configuration page</a>.');
     drupal_set_message($success, 'status');
   }
   else {
-    $error  = t('Realname registration requires that you enable the Profile module or Content profile registration.');
+    $error  = t('Realname registration requires that you enable the Profile module or Content profile registration.') . ' ';
     $error .= t('Please enable one of the depedent modules before re-enabling Realname registration');
     drupal_set_message($error, 'error');
     module_disable(array( 0 => 'realname_registration' ));
@@ -554,14 +554,14 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
         }
         else {
           $firstname = db_result(db_query("
-            SELECT {$firstname_field}_value
+            SELECT %s
             FROM node AS n
             LEFT JOIN content_type_profile AS c
             ON n.nid = c.nid
             WHERE n.uid = %d
             AND n.type = '%s'
             LIMIT 0, 1
-            ", $account->uid, variable_get('realname_registration_content_profile_firstname_field_node', '')));
+            ", $firstname_field . '_value', $account->uid, variable_get('realname_registration_content_profile_firstname_field_node', '')));
         }
 
         $middlename_field = variable_get('realname_registration_middlename_field', '');
@@ -578,14 +578,14 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
           }
           else {
             $middlename = db_result(db_query("
-              SELECT {$middlename_field}_value
+              SELECT %s
               FROM node AS n
               LEFT JOIN content_type_profile AS c
               ON n.nid = c.nid
               WHERE n.uid = %d
               AND n.type = '%s'
               LIMIT 0, 1
-              ", $account->uid, variable_get('realname_registration_content_profile_middlename_field_node', '')));
+              ", $middlename_field . '_value', $account->uid, variable_get('realname_registration_content_profile_middlename_field_node', '')));
           }
         }
 
@@ -602,14 +602,14 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
         }
         else {
           $lastname = db_result(db_query("
-            SELECT {$lastname_field}_value
+            SELECT %s
             FROM node AS n
             LEFT JOIN content_type_profile AS c
             ON n.nid = c.nid
             WHERE n.uid = %d
             AND n.type = '%s'
             LIMIT 0, 1
-            ", $account->uid, variable_get('realname_registration_content_profile_lastname_field_node', '')));
+            ", $lastname_field . '_value', $account->uid, variable_get('realname_registration_content_profile_lastname_field_node', '')));
         }
         
         $values['first-name']     = !empty($firstname)  ? check_plain($firstname) : '';
