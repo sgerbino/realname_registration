@@ -556,12 +556,13 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
           $firstname = db_result(db_query("
             SELECT %s
             FROM {node} AS n
-            LEFT JOIN {content_type_profile} AS c
+            LEFT JOIN {content_%s} AS c
             ON n.nid = c.nid
             WHERE n.uid = %d
             AND n.type = '%s'
-            LIMIT 0, 1
-            ", $firstname_field . '_value', $account->uid, variable_get('realname_registration_content_profile_firstname_field_node', '')));
+            LIMIT 0, 1",
+            $firstname_field . '_value', $firstname_field,
+            $account->uid, variable_get('realname_registration_content_profile_firstname_field_node', '')));
         }
 
         $middlename_field = variable_get('realname_registration_middlename_field', '');
@@ -580,12 +581,13 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
             $middlename = db_result(db_query("
               SELECT %s
               FROM {node} AS n
-              LEFT JOIN {content_type_profile} AS c
+              LEFT JOIN {content_%s} AS c
               ON n.nid = c.nid
               WHERE n.uid = %d
               AND n.type = '%s'
-              LIMIT 0, 1
-              ", $middlename_field . '_value', $account->uid, variable_get('realname_registration_content_profile_middlename_field_node', '')));
+              LIMIT 0, 1",
+              $middlename_field . '_value', $middlename_field,
+              $account->uid, variable_get('realname_registration_content_profile_middlename_field_node', '')));
           }
         }
 
@@ -604,12 +606,13 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
           $lastname = db_result(db_query("
             SELECT %s
             FROM {node} AS n
-            LEFT JOIN {content_type_profile} AS c
+            LEFT JOIN {content_%s} AS c
             ON n.nid = c.nid
             WHERE n.uid = %d
             AND n.type = '%s'
-            LIMIT 0, 1
-            ", $lastname_field . '_value', $account->uid, variable_get('realname_registration_content_profile_lastname_field_node', '')));
+            LIMIT 0, 1",
+            $lastname_field . '_value', $lastname_field, 
+            $account->uid, variable_get('realname_registration_content_profile_lastname_field_node', '')));
         }
         
         $values['first-name']     = !empty($firstname)  ? check_plain($firstname) : '';

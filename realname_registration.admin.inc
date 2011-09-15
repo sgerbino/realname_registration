@@ -249,8 +249,9 @@ function realname_registration_settings_validate($form, &$form_state) {
     . "FROM {content_node_field_instance} AS i "
     . "LEFT JOIN {content_node_field} AS c "
     . "ON i.field_name = c.field_name "
-    . "WHERE i.field_name = '%s'";
-    $firstname_field = db_fetch_object(db_query($sql, $form_state['values']['realname_registration_firstname_field']));
+    . "WHERE i.field_name = '%s' "
+    . "AND i.type_name = '%s'";
+    $firstname_field = db_fetch_object(db_query($sql, $form_state['values']['realname_registration_firstname_field'], $form_state['values']['realname_registration_content_profile_firstname_field_node']));
     if (empty($firstname_field)) {
       form_set_error('realname_registration_firstname_field', $err_pretext . $form_state['values']['realname_registration_firstname_field'] . $err_unknown);
     }
@@ -294,8 +295,9 @@ function realname_registration_settings_validate($form, &$form_state) {
       . "FROM {content_node_field_instance} AS i "
       . "LEFT JOIN {content_node_field} AS c "
       . "ON i.field_name = c.field_name "
-      . "WHERE i.field_name = '%s'";
-      $middlename_field = db_fetch_object(db_query($sql, $form_state['values']['realname_registration_middlename_field']));
+      . "WHERE i.field_name = '%s' "
+      . "AND i.type_name = '%s'";
+      $middlename_field = db_fetch_object(db_query($sql, $form_state['values']['realname_registration_middlename_field'], $form_state['values']['realname_registration_content_profile_middlename_field_node']));
       if (empty($middlename_field)) {
         form_set_error('realname_registration_middlename_field', $err_pretext . $form_state['values']['realname_registration_middlename_field'] . $err_unknown);
       }
@@ -339,8 +341,9 @@ function realname_registration_settings_validate($form, &$form_state) {
     . "FROM {content_node_field_instance} AS i "
     . "LEFT JOIN {content_node_field} AS c "
     . "ON i.field_name = c.field_name "
-    . "WHERE i.field_name = '%s'";
-    $lastname_field = db_fetch_object(db_query($sql, $form_state['values']['realname_registration_lastname_field']));
+    . "WHERE i.field_name = '%s' "
+    . "AND i.type_name = '%s'";
+    $lastname_field = db_fetch_object(db_query($sql, $form_state['values']['realname_registration_lastname_field'], $form_state['values']['realname_registration_content_profile_lastname_field_node']));
     if (empty($lastname_field)) {
       form_set_error('realname_registration_lastname_field', $err_pretext . $form_state['values']['realname_registration_lastname_field'] . $err_unknown);
     }
