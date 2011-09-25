@@ -542,6 +542,9 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
       }
       if ($account->uid) {
         $firstname_field = variable_get('realname_registration_firstname_field', '');
+        if (module_exists('content_profile_registration')) {
+          $content_profile_type_count = db_result(db_query("SELECT COUNT(DISTINCT type_name) FROM {content_node_field_instance} WHERE field_name = '%s'", $firstname_field));
+        }
         if (!variable_get('realname_registration_use_content_profile_firstname_field', 0)) {
           $firstname = db_result(db_query("
              SELECT profile_values.value
@@ -553,19 +556,35 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
              ", $firstname_field, $account->uid ));
         }
         else {
-          $firstname = db_result(db_query("
-            SELECT %s
-            FROM {node} AS n
-            LEFT JOIN {content_%s} AS c
-            ON n.nid = c.nid
-            WHERE n.uid = %d
-            AND n.type = '%s'
-            LIMIT 0, 1",
-            $firstname_field . '_value', $firstname_field,
-            $account->uid, variable_get('realname_registration_content_profile_firstname_field_node', '')));
+          if ($content_profile_type_count > 1) {
+            $firstname = db_result(db_query("
+              SELECT %s
+              FROM {node} AS n
+              LEFT JOIN {content_%s} AS c
+              ON n.nid = c.nid
+              WHERE n.uid = %d
+              AND n.type = '%s'
+              LIMIT 0, 1",
+              $firstname_field . '_value', $firstname_field,
+              $account->uid, variable_get('realname_registration_content_profile_firstname_field_node', '')));
+          }
+          else {
+            $firstname = db_result(db_query("
+              SELECT %s
+              FROM {content_type_%s} AS c
+              LEFT JOIN {node} AS n
+              ON c.nid =  n.nid
+              WHERE n.uid = %d
+              LIMIT 0, 1",
+              $firstname_field . '_value', variable_get('realname_registration_content_profile_firstname_field_node', ''),
+              $account->uid ));
+          }
         }
 
         $middlename_field = variable_get('realname_registration_middlename_field', '');
+        if (module_exists('content_profile_registration')) {
+          $content_profile_type_count = db_result(db_query("SELECT COUNT(DISTINCT type_name) FROM {content_node_field_instance} WHERE field_name = '%s'", $middlename_field));
+        }
         if (!empty($middlename_field)) {
           if (!variable_get('realname_registration_use_content_profile_middlename_field', 0)) {
             $middlename = db_result(db_query("
@@ -578,20 +597,36 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
                ", $middlename_field, $account->uid ));
           }
           else {
-            $middlename = db_result(db_query("
-              SELECT %s
-              FROM {node} AS n
-              LEFT JOIN {content_%s} AS c
-              ON n.nid = c.nid
-              WHERE n.uid = %d
-              AND n.type = '%s'
-              LIMIT 0, 1",
-              $middlename_field . '_value', $middlename_field,
-              $account->uid, variable_get('realname_registration_content_profile_middlename_field_node', '')));
+            if ($content_profile_type_count > 1) {
+              $middlename = db_result(db_query("
+                SELECT %s
+                FROM {node} AS n
+                LEFT JOIN {content_%s} AS c
+                ON n.nid = c.nid
+                WHERE n.uid = %d
+                AND n.type = '%s'
+                LIMIT 0, 1",
+                $middlename_field . '_value', $middlename_field,
+                $account->uid, variable_get('realname_registration_content_profile_middlename_field_node', '')));
+            }
+            else {
+              $middlename = db_result(db_query("
+                SELECT %s
+                FROM {content_type_%s} AS c
+                LEFT JOIN {node} AS n
+                ON c.nid =  n.nid
+                WHERE n.uid = %d
+                LIMIT 0, 1",
+                $middlename_field . '_value', variable_get('realname_registration_content_profile_middlename_field_node', ''),
+                $account->uid ));
+            }
           }
         }
 
         $lastname_field = variable_get('realname_registration_lastname_field', '');
+        if (module_exists('content_profile_registration')) {
+          $content_profile_type_count = db_result(db_query("SELECT COUNT(DISTINCT type_name) FROM {content_node_field_instance} WHERE field_name = '%s'", $lastname_field));
+        }
         if (!variable_get('realname_registration_use_content_profile_lastname_field', 0)) {
           $lastname = db_result(db_query("
              SELECT profile_values.value
@@ -603,16 +638,29 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
              ", $lastname_field, $account->uid ));
         }
         else {
-          $lastname = db_result(db_query("
-            SELECT %s
-            FROM {node} AS n
-            LEFT JOIN {content_%s} AS c
-            ON n.nid = c.nid
-            WHERE n.uid = %d
-            AND n.type = '%s'
-            LIMIT 0, 1",
-            $lastname_field . '_value', $lastname_field, 
-            $account->uid, variable_get('realname_registration_content_profile_lastname_field_node', '')));
+          if ($content_profile_type_count > 1) {
+            $lastname = db_result(db_query("
+              SELECT %s
+              FROM {node} AS n
+              LEFT JOIN {content_%s} AS c
+              ON n.nid = c.nid
+              WHERE n.uid = %d
+              AND n.type = '%s'
+              LIMIT 0, 1",
+              $lastname_field . '_value', $lastname_field, 
+              $account->uid, variable_get('realname_registration_content_profile_lastname_field_node', '')));
+          }
+          else {
+            $lastname = db_result(db_query("
+              SELECT %s
+              FROM {content_type_%s} AS c
+              LEFT JOIN {node} AS n
+              ON c.nid =  n.nid
+              WHERE n.uid = %d
+              LIMIT 0, 1",
+              $lastname_field . '_value', variable_get('realname_registration_content_profile_lastname_field_node', ''),
+              $account->uid ));
+          }
         }
         
         $values['first-name']     = !empty($firstname)  ? check_plain($firstname) : '';
