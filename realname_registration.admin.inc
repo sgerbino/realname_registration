@@ -214,6 +214,11 @@ function realname_registration_settings_validate($form, &$form_state) {
   $err_textfield = '</em>, ' . t('must use textfield widget.');
   $err_content_profile_req = t("You must specify a content profile machine name for the field, ") . '<em>';
   
+  // If content_permissions module is enabled, we must ensure anonymous users can edit the fields on registration.
+  if (module_exists('content_permissions')) {
+    realname_registration_check_content_permissions($form, $form_state);
+  }
+
   // If we are told to use content profile fields to store values, we need to know which content profile node type.
   if ($form_state['values']['realname_registration_use_content_profile_firstname_field'] && empty($form_state['values']['realname_registration_content_profile_firstname_field_node'])) {
     form_set_error('realname_registration_content_profile_firstname_field_node', $err_content_profile_req . $form_state['values']['realname_registration_firstname_field'] . '</em>');
@@ -227,7 +232,7 @@ function realname_registration_settings_validate($form, &$form_state) {
 
   // Validation for the first name field.
   if (!($form_state['values']['realname_registration_use_content_profile_firstname_field'])) {
-    $firstname_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_firstname_field']));
+    $firstname_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", check_plain($form_state['values']['realname_registration_firstname_field'])));
     if (empty($firstname_field)) {
       form_set_error('realname_registration_firstname_field', $err_pretext . $form_state['values']['realname_registration_firstname_field'] . $err_unknown);
     }
@@ -251,7 +256,7 @@ function realname_registration_settings_validate($form, &$form_state) {
     . "ON i.field_name = c.field_name "
     . "WHERE i.field_name = '%s' "
     . "AND i.type_name = '%s'";
-    $firstname_field = db_fetch_object(db_query($sql, $form_state['values']['realname_registration_firstname_field'], $form_state['values']['realname_registration_content_profile_firstname_field_node']));
+    $firstname_field = db_fetch_object(db_query($sql, $form_state['values']['realname_registration_firstname_field'], check_plain($form_state['values']['realname_registration_content_profile_firstname_field_node'])));
     if (empty($firstname_field)) {
       form_set_error('realname_registration_firstname_field', $err_pretext . $form_state['values']['realname_registration_firstname_field'] . $err_unknown);
     }
@@ -276,7 +281,7 @@ function realname_registration_settings_validate($form, &$form_state) {
   // Validation for the middle name field.
   if (!empty($form_state['values']['realname_registration_middlename_field'])) {
     if (!($form_state['values']['realname_registration_use_content_profile_middlename_field'])) {
-      $middlename_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_middlename_field']));
+      $middlename_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", check_plain($form_state['values']['realname_registration_middlename_field'])));
       if (empty($middlename_field)) {
         form_set_error('realname_registration_middlename_field', $err_pretext . $form_state['values']['realname_registration_middlename_field'] . $err_unknown);
       }
@@ -297,7 +302,7 @@ function realname_registration_settings_validate($form, &$form_state) {
       . "ON i.field_name = c.field_name "
       . "WHERE i.field_name = '%s' "
       . "AND i.type_name = '%s'";
-      $middlename_field = db_fetch_object(db_query($sql, $form_state['values']['realname_registration_middlename_field'], $form_state['values']['realname_registration_content_profile_middlename_field_node']));
+      $middlename_field = db_fetch_object(db_query($sql, $form_state['values']['realname_registration_middlename_field'], check_plain($form_state['values']['realname_registration_content_profile_middlename_field_node'])));
       if (empty($middlename_field)) {
         form_set_error('realname_registration_middlename_field', $err_pretext . $form_state['values']['realname_registration_middlename_field'] . $err_unknown);
       }
@@ -319,7 +324,7 @@ function realname_registration_settings_validate($form, &$form_state) {
 
   // Validation for the last name field.
   if (!($form_state['values']['realname_registration_use_content_profile_lastname_field'])) {
-    $lastname_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", $form_state['values']['realname_registration_lastname_field']));
+    $lastname_field = db_fetch_object(db_query("SELECT type, required, register, category FROM {profile_fields} WHERE name = '%s'", check_plain($form_state['values']['realname_registration_lastname_field'])));
     if (empty($lastname_field)) {
       form_set_error('realname_registration_lastname_field', $err_pretext . $form_state['values']['realname_registration_lastname_field'] . $err_unknown);
     }
@@ -343,7 +348,7 @@ function realname_registration_settings_validate($form, &$form_state) {
     . "ON i.field_name = c.field_name "
     . "WHERE i.field_name = '%s' "
     . "AND i.type_name = '%s'";
-    $lastname_field = db_fetch_object(db_query($sql, $form_state['values']['realname_registration_lastname_field'], $form_state['values']['realname_registration_content_profile_lastname_field_node']));
+    $lastname_field = db_fetch_object(db_query($sql, $form_state['values']['realname_registration_lastname_field'], check_plain($form_state['values']['realname_registration_content_profile_lastname_field_node'])));
     if (empty($lastname_field)) {
       form_set_error('realname_registration_lastname_field', $err_pretext . $form_state['values']['realname_registration_lastname_field'] . $err_unknown);
     }
@@ -362,6 +367,31 @@ function realname_registration_settings_validate($form, &$form_state) {
     }
     if (!$match) {
       form_set_error('realname_registration_lastname_field', $err_pretext . $form_state['values']['realname_registration_lastname_field'] . $err_register);
+    }
+  }
+}
+
+function realname_registration_check_content_permissions($form, &$form_state) {
+  $anonymous_user = user_load(0);
+
+  if (isset($form_state['values']['realname_registration_firstname_field'])) {
+    $firstname_permission = 'edit ' . $form_state['values']['realname_registration_firstname_field'];
+    if (!user_access($firstname_permission, $anonymous_user)) {
+      form_set_error('realname_registration_firstname_field', t("Anonymous users must be able to edit your firstname field, this can be corrected on the Drupal permissions page."));
+    }
+  }
+
+  if (isset($form_state['values']['realname_registration_middlename_field'])) {
+    $middlename_permission = 'edit ' . $form_state['values']['realname_registration_middlename_field'];
+    if (!user_access($middlename_permission, $anonymous_user)) {
+      form_set_error('realname_registration_middlename_field', t("Anonymous users must be able to edit your middlename field, this can be corrected on the Drupal permissions page."));
+    }
+  }
+
+  if (isset($form_state['values']['realname_registration_lastname_field'])) {
+    $lastname_permission = 'edit ' . $form_state['values']['realname_registration_lastname_field'];
+    if (!user_access($lastname_permission, $anonymous_user)) {
+      form_set_error('realname_registration_lastname_field', t("Anonymous users must be able to edit your lastname field, this can be corrected on the Drupal permissions page."));
     }
   }
 }
