@@ -215,7 +215,7 @@ function realname_registration_settings_validate($form, &$form_state) {
   $err_content_profile_req = t("You must specify a content profile machine name for the field, ") . '<em>';
   
   // If content_permissions module is enabled, we must ensure anonymous users can edit the fields on registration.
-  if (module_exists('content_permissions')) {
+  if (module_exists('content_permissions') && module_exists('content_profile')) {
     realname_registration_check_content_permissions($form, $form_state);
   }
 
@@ -374,21 +374,21 @@ function realname_registration_settings_validate($form, &$form_state) {
 function realname_registration_check_content_permissions($form, &$form_state) {
   $anonymous_user = user_load(0);
 
-  if (isset($form_state['values']['realname_registration_firstname_field'])) {
+  if (isset($form_state['values']['realname_registration_firstname_field']) && $form_state['values']['realname_registration_use_content_profile_firstname_field']) {
     $firstname_permission = 'edit ' . $form_state['values']['realname_registration_firstname_field'];
     if (!user_access($firstname_permission, $anonymous_user)) {
       form_set_error('realname_registration_firstname_field', t("Anonymous users must be able to edit your firstname field, this can be corrected on the Drupal permissions page."));
     }
   }
 
-  if (isset($form_state['values']['realname_registration_middlename_field'])) {
+  if (isset($form_state['values']['realname_registration_middlename_field']) && $form_state['values']['realname_registration_use_content_profile_middlename_field']) {
     $middlename_permission = 'edit ' . $form_state['values']['realname_registration_middlename_field'];
     if (!user_access($middlename_permission, $anonymous_user)) {
       form_set_error('realname_registration_middlename_field', t("Anonymous users must be able to edit your middlename field, this can be corrected on the Drupal permissions page."));
     }
   }
 
-  if (isset($form_state['values']['realname_registration_lastname_field'])) {
+  if (isset($form_state['values']['realname_registration_lastname_field']) && $form_state['values']['realname_registration_use_content_profile_lastname_field']) {
     $lastname_permission = 'edit ' . $form_state['values']['realname_registration_lastname_field'];
     if (!user_access($lastname_permission, $anonymous_user)) {
       form_set_error('realname_registration_lastname_field', t("Anonymous users must be able to edit your lastname field, this can be corrected on the Drupal permissions page."));
