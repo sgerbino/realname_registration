@@ -492,9 +492,21 @@ function realname_registration_menu() {
     'description' => 'Administer settings for Realname registration.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('realname_registration_settings_form'),
-    'access arguments' => array('access administration pages'),
+    'access arguments' => array('administer realname registration'),
     'file' => 'realname_registration.admin.inc',
    );
 
   return $items;
+}
+
+/**
+* Implementation of hook_permission().
+*/
+function realname_registration_permission() {
+  return array(
+    'administer realname registration' => array(
+      'title' => t('Administer Realname registration'), 
+      'description' => t('Perform administration tasks for Realname registration.'),
+    ),
+  );
 }
