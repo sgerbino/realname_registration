@@ -496,7 +496,7 @@ function realname_registration_menu() {
     'description' => t('Realname registration settings'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('realname_registration_settings_form'),
-    'access arguments' => array('access administration pages'),
+    'access arguments' => array('administer realname registration'),
     'type' => MENU_NORMAL_ITEM,
     'weight' => 10,
     'file' => 'realname_registration.admin.inc',
@@ -680,4 +680,11 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
       break;
   }
   return $values;
+}
+
+/**
+* Implements hook_perm().
+*/
+function realname_registration_perm() {
+  return array('administer realname registration');
 }
