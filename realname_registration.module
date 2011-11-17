@@ -52,7 +52,7 @@ function realname_registration_help($path, $arg) {
       $output .= '<p><strong>' . t('Project resources') . '</strong></p>';
       $output .= '<ul>';
       $output .= '<li><a href="http://drupal.org/project/realname_registration">' . t('Project home') . '</a></li>';
-      $output .= '<li><a href="http://docs.yunices.com/project/realname-registration/installation-configuration">' . t('Documentation') . '</a></li>';
+      $output .= '<li><a href="http://drupal.org/node/1344864">' . t('Documentation') . '</a></li>';
       $output .= '<li><a href="http://drupal.org/project/issues/realname_registration?status=All&categories=All">' . t('Issue tracker') . '</a></li>';
       $output .= '</ul>';
       
