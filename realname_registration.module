@@ -179,7 +179,10 @@ function realname_registration_validate($form, &$form_state) {
 function realname_registration_mandatory_validate($form, &$form_state) {
   $c = realname_registration_load_settings();
 
-  // A first name may not contain symbols or numbers.
+  /*
+   * A first name may not start or end with a space, and may not contain
+   * two consecutive spaces.
+   */
   if (!$c->fname->use_content_profile) {
     if (preg_match("/^\\s+(.*)$/", $form_state['values'][$c->fname->field])) {
       form_set_error($c->fname->field, t('First name cannot begin with a space.'));
@@ -206,7 +209,10 @@ function realname_registration_mandatory_validate($form, &$form_state) {
     }
   }
 
-  // A middle name may not contain symbols or numbers.
+  /*
+   * A middle name may not start or end with a space, and may not contain
+   * two consecutive spaces.
+   */
   if (!$c->mname->use_content_profile) {
     if (!empty($form_state['values'][$c->mname->field])) {
       if (preg_match("/^\\s+(.*)$/", $form_state['values'][$c->mname->field])) {
@@ -237,7 +243,10 @@ function realname_registration_mandatory_validate($form, &$form_state) {
     }
   }
 
-  // A last name may not contain symbols or numbers.
+  /*
+   * A last name may not start or end with a space, and may not contain
+   * two consecutive spaces.
+   */
   if (!$c->lname->use_content_profile) {
     if (preg_match("/^\\s+(.*)$/", $form_state['values'][$c->lname->field])) {
       form_set_error($c->lname->field, t('Last name cannot begin with a space.'));
