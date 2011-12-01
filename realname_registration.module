@@ -26,7 +26,7 @@ function realname_registration_enable() {
     $error  = t('Realname registration requires that you enable the Profile module or Content profile registration.') . ' ';
     $error .= t('Please enable one of the depedent modules before re-enabling Realname registration');
     drupal_set_message($error, 'error');
-    module_disable(array( 0 => 'realname_registration' ));
+    module_disable(array(0 => 'realname_registration'));
   }
 }
 
@@ -647,126 +647,9 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
       if ($account->uid) {
         $c = realname_registration_load_settings();
 
-        if (module_exists('content_profile_registration')) {
-          $content_profile_type_count = 
-            db_result(db_query("SELECT COUNT(DISTINCT type_name) FROM {content_node_field_instance} WHERE field_name = '%s'", $c->fname->field));
-        }
-
-        if (!$c->fname->use_content_profile) {
-          $firstname = db_result(db_query("
-             SELECT profile_values.value
-             FROM {profile_values}
-             INNER JOIN {profile_fields}
-             ON profile_values.fid = profile_fields.fid
-             WHERE profile_fields.name = '%s'
-             AND profile_values.uid = %d
-             ", $c->fname->field, $account->uid ));
-        }
-        else {
-          if ($content_profile_type_count > 1) {
-            $firstname = db_result(db_query("
-              SELECT %s
-              FROM {node} AS n
-              LEFT JOIN {content_%s} AS c
-              ON n.nid = c.nid
-              WHERE n.uid = %d
-              AND n.type = '%s'
-              LIMIT 0, 1",
-              $c->fname->field . '_value', $c->fname->field,
-              $account->uid, $c->fname->content_node));
-          }
-          else {
-            $firstname = db_result(db_query("
-              SELECT %s
-              FROM {content_type_%s} AS c
-              LEFT JOIN {node} AS n
-              ON c.nid =  n.nid
-              WHERE n.uid = %d
-              LIMIT 0, 1",
-              $c->fname->field . '_value', $c->fname->content_node,
-              $account->uid ));
-          }
-        }
-
-        if (module_exists('content_profile_registration')) {
-          $content_profile_type_count = db_result(db_query("SELECT COUNT(DISTINCT type_name) FROM {content_node_field_instance} WHERE field_name = '%s'", $c->mname->field));
-        }
-        if (!empty($c->mname->field)) {
-          if (!$c->mname->use_content_profile) {
-            $middlename = db_result(db_query("
-               SELECT profile_values.value
-               FROM {profile_values}
-               INNER JOIN {profile_fields}
-               ON profile_values.fid = profile_fields.fid
-               WHERE profile_fields.name = '%s'
-               AND profile_values.uid = %d
-               ", $c->mname->field, $account->uid ));
-          }
-          else {
-            if ($content_profile_type_count > 1) {
-              $middlename = db_result(db_query("
-                SELECT %s
-                FROM {node} AS n
-                LEFT JOIN {content_%s} AS c
-                ON n.nid = c.nid
-                WHERE n.uid = %d
-                AND n.type = '%s'
-                LIMIT 0, 1",
-                $c->mname->field . '_value', $c->mname->field,
-                $account->uid, $c->mname->content_node));
-            }
-            else {
-              $middlename = db_result(db_query("
-                SELECT %s
-                FROM {content_type_%s} AS c
-                LEFT JOIN {node} AS n
-                ON c.nid =  n.nid
-                WHERE n.uid = %d
-                LIMIT 0, 1",
-                $c->mname->field . '_value', $c->mname->content_node,
-                $account->uid ));
-            }
-          }
-        }
-
-        if (module_exists('content_profile_registration')) {
-          $content_profile_type_count = db_result(db_query("SELECT COUNT(DISTINCT type_name) FROM {content_node_field_instance} WHERE field_name = '%s'", $c->lname->field));
-        }
-        if (!$c->lname->use_content_profile) {
-          $lastname = db_result(db_query("
-             SELECT profile_values.value
-             FROM {profile_values}
-             INNER JOIN {profile_fields}
-             ON profile_values.fid = profile_fields.fid
-             WHERE profile_fields.name = '%s'
-             AND profile_values.uid = %d
-             ", $c->lname->field, $account->uid ));
-        }
-        else {
-          if ($content_profile_type_count > 1) {
-            $lastname = db_result(db_query("
-              SELECT %s
-              FROM {node} AS n
-              LEFT JOIN {content_%s} AS c
-              ON n.nid = c.nid
-              WHERE n.uid = %d
-              AND n.type = '%s'
-              LIMIT 0, 1",
-              $c->lname->field . '_value', $c->lname->field, 
-              $account->uid, $c->lname->content_node));
-          }
-          else {
-            $lastname = db_result(db_query("
-              SELECT %s
-              FROM {content_type_%s} AS c
-              LEFT JOIN {node} AS n
-              ON c.nid =  n.nid
-              WHERE n.uid = %d
-              LIMIT 0, 1",
-              $c->lname->field . '_value', $c->lname->content_node,
-              $account->uid ));
-          }
-        }
+        $firstname  = realname_registration_get_fname($account);
+        $middlename = realname_registration_get_mname($account);
+        $lastname   = realname_registration_get_lname($account);
         
         $values['first-name']     = !empty($firstname)  ? check_plain($firstname) : '';
         $values['last-name']      = !empty($lastname)   ? check_plain($lastname) : '';
@@ -785,6 +668,177 @@ function realname_registration_token_values($type, $object = NULL, $options = ar
       break;
   }
   return $values;
+}
+
+/**
+ * Implementation of realname_registration_get_fname();
+ *
+ * Determine where the first name values are located and
+ * return the first name.
+ *
+ * @param &$account
+ *   The user object on which the operation is being performed.
+ */
+function realname_registration_get_fname($account) {
+  $c = realname_registration_load_settings();
+
+  if (module_exists('content_profile_registration')) {
+    $content_profile_type_count = db_result(db_query("
+      SELECT COUNT(DISTINCT type_name) FROM {content_node_field_instance}
+      WHERE field_name = '%s'", $c->fname->field));
+  }
+
+  if (!$c->fname->use_content_profile) {
+    $firstname = db_result(db_query("
+      SELECT profile_values.value
+      FROM {profile_values}
+      INNER JOIN {profile_fields}
+      ON profile_values.fid = profile_fields.fid
+      WHERE profile_fields.name = '%s'
+      AND profile_values.uid = %d",
+      $c->fname->field, $account->uid ));
+  }
+  else {
+    if ($content_profile_type_count > 1) {
+      $firstname = db_result(db_query("
+        SELECT %s
+        FROM {node} AS n
+        LEFT JOIN {content_%s} AS c
+        ON n.nid = c.nid
+        WHERE n.uid = %d
+        AND n.type = '%s'
+        LIMIT 0, 1",
+        $c->fname->field . '_value', $c->fname->field,
+        $account->uid, $c->fname->content_node));
+    }
+    else {
+      $firstname = db_result(db_query("
+        SELECT %s
+        FROM {content_type_%s} AS c
+        LEFT JOIN {node} AS n
+        ON c.nid =  n.nid
+        WHERE n.uid = %d
+        LIMIT 0, 1",
+        $c->fname->field . '_value', $c->fname->content_node,
+        $account->uid ));
+    }
+  }
+
+  return $firstname;
+}
+
+/**
+ * Implementation of realname_registration_get_mname();
+ *
+ * Determine where the middle name values are located and
+ * return the middle name.
+ *
+ * @param &$account
+ *   The user object on which the operation is being performed.
+ */
+function realname_registration_get_mname($account) {
+  $c = realname_registration_load_settings();
+
+  if (module_exists('content_profile_registration')) {
+    $content_profile_type_count = db_result(db_query("
+      SELECT COUNT(DISTINCT type_name) FROM {content_node_field_instance} 
+      WHERE field_name = '%s'", $c->mname->field));
+  }
+
+  if (!empty($c->mname->field)) {
+    if (!$c->mname->use_content_profile) {
+      $middlename = db_result(db_query("
+        SELECT profile_values.value
+        FROM {profile_values}
+        INNER JOIN {profile_fields}
+        ON profile_values.fid = profile_fields.fid
+        WHERE profile_fields.name = '%s'
+        AND profile_values.uid = %d",
+        $c->mname->field, $account->uid ));
+    }
+    else {
+      if ($content_profile_type_count > 1) {
+        $middlename = db_result(db_query("
+          SELECT %s
+          FROM {node} AS n
+          LEFT JOIN {content_%s} AS c
+          ON n.nid = c.nid
+          WHERE n.uid = %d
+          AND n.type = '%s'
+          LIMIT 0, 1",
+          $c->mname->field . '_value', $c->mname->field,
+          $account->uid, $c->mname->content_node));
+      }
+      else {
+        $middlename = db_result(db_query("
+          SELECT %s
+          FROM {content_type_%s} AS c
+          LEFT JOIN {node} AS n
+          ON c.nid =  n.nid
+          WHERE n.uid = %d
+          LIMIT 0, 1",
+          $c->mname->field . '_value', $c->mname->content_node,
+          $account->uid ));
+      }
+    }
+  }
+
+  return $middlename;
+}
+
+/**
+ * Implementation of realname_registration_get_lname();
+ *
+ * Determine where the last name values are located and
+ * return the last name.
+ *
+ * @param &$account
+ *   The user object on which the operation is being performed.
+ */
+function realname_registration_get_lname($account) {
+  $c = realname_registration_load_settings();
+
+  if (module_exists('content_profile_registration')) {
+    $content_profile_type_count = db_result(db_query("
+      SELECT COUNT(DISTINCT type_name) FROM {content_node_field_instance} 
+      WHERE field_name = '%s'", $c->lname->field));
+  }
+  if (!$c->lname->use_content_profile) {
+    $lastname = db_result(db_query("
+      SELECT profile_values.value
+      FROM {profile_values}
+      INNER JOIN {profile_fields}
+      ON profile_values.fid = profile_fields.fid
+      WHERE profile_fields.name = '%s'
+      AND profile_values.uid = %d", $c->lname->field, $account->uid ));
+  }
+  else {
+    if ($content_profile_type_count > 1) {
+      $lastname = db_result(db_query("
+        SELECT %s
+        FROM {node} AS n
+        LEFT JOIN {content_%s} AS c
+        ON n.nid = c.nid
+        WHERE n.uid = %d
+        AND n.type = '%s'
+        LIMIT 0, 1",
+        $c->lname->field . '_value', $c->lname->field, 
+        $account->uid, $c->lname->content_node));
+    }
+    else {
+      $lastname = db_result(db_query("
+        SELECT %s
+        FROM {content_type_%s} AS c
+        LEFT JOIN {node} AS n
+        ON c.nid =  n.nid
+        WHERE n.uid = %d
+        LIMIT 0, 1",
+        $c->lname->field . '_value', $c->lname->content_node,
+        $account->uid ));
+    }
+  }
+
+  return $lastname;
 }
 
 /**
