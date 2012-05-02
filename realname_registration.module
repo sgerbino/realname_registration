@@ -318,7 +318,7 @@ function realname_registration_set_username(&$edit) {
         $username = $edit[$c->fname->field];
       }
       else {
-        $username = $edit[$$c->fname->field][0]['value'];
+        $username = $edit[$c->fname->field][0]['value'];
       }
       $username .= ' ';
       if (!$c->lname->use_content_profile) {
