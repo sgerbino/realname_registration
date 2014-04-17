@@ -125,47 +125,31 @@ function realname_registration_validate($form, &$form_state) {
   $c = realname_registration_load_settings();
 
   // A first name may not contain symbols or numbers.
-  if (!$c->fname->use_content_profile) {
-    if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['values'][$c->fname->field])) {
-      form_set_error($c->fname->field, t('First name may not contain symbols or numbers.'));
-    }
-  }
-  else {
-    if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/",
-      $form_state['content_profile_registration'][$c->fname->content_node]['node']->{$c->fname->field}[0]['value'])) {
-      form_set_error($c->fname->field, t('First name may not contain symbols or numbers.'));
-    }
+  $fname = $c->fname->use_content_profile ?
+    $form_state['content_profile_registration'][$c->fname->content_node]['node']->{$c->fname->field}[0]['value'] :
+    $form_state['values'][$c->fname->field];
+  if (!preg_match('/^\pL+$/u', $fname)) {
+    form_set_error($c->fname->field, t('First name may not contain symbols or numbers.'));
   }
 
-  // A middle name may not contain symbols or numbers.
-  if (!$c->mname->use_content_profile) {
-    if (!empty($form_state['values'][$c->mname])) {
-      if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['values'][$c->mname])) {
-        form_set_error($c->mname, t('Middle name may not contain symbols or numbers.'));
-      }
-    }
-  }
-  else {
-    if (!empty($form_state['content_profile_registration'][$c->mname->content_node]['node']->{$c->mname->field}[0]['value'])) {
-      if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/",
-        $form_state['content_profile_registration'][$c->mname->content_node]['node']->{$c->mname->field}[0]['value'])) {
-        form_set_error($c->mname->field, t('Middle name may not contain symbols or numbers.'));
-      }
+  // A middle name may not contain symbols or numbers. This field is optional.
+  if ($c->mname->field) {
+    $mname = $c->mname->use_content_profile ?
+      $form_state['content_profile_registration'][$c->mname->content_node]['node']->{$c->mname->field}[0]['value'] :
+      $form_state['values'][$c->mname->field];
+    if (!preg_match('/^\pL+$/u', $mname)) {
+      form_set_error($c->mname->field, t('Middle name may not contain symbols or numbers.'));
     }
   }
 
   // A last name may not contain symbols or numbers.
-  if (!$c->lname->use_content_profile) {
-    if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/", $form_state['values'][$c->lname->field])) {
-      form_set_error($c->lname->field, t('Last name may not contain symbols or numbers.'));
-    }
+  $lname = $c->lname->use_content_profile ?
+    $form_state['content_profile_registration'][$c->lname->content_node]['node']->{$c->lname->field}[0]['value'] :
+    $form_state['values'][$c->lname->field];
+  if (!preg_match('/^\pL+$/u', $lname)) {
+    form_set_error($c->lname->field, t('Last name may not contain symbols or numbers.'));
   }
-  else {
-    if (preg_match("/[\!\#\$\%\^\*\(\)\[\]\{\}\\\|\/\?\.\>\<\\\"\+,:;=&@0-9]/",
-      $form_state['content_profile_registration'][$c->lname->content_node]['node']->{$c->lname->field}[0]['value'])) {
-      form_set_error($c->lname->field, t('Last name may not contain symbols or numbers.'));
-    }
-  }
+
 }
 
 /**
@@ -523,7 +507,7 @@ function realname_registration_set_username(&$edit) {
 
   // Check if we should force the username to lowercase characters.
   if ($c->username_tolower) {
-    $username = strtolower($username);
+    $username = drupal_strtolower($username);
   }
 
   /* 
@@ -551,24 +535,24 @@ function realname_registration_ucfirst(&$edit) {
   $c = realname_registration_load_settings();
 
   if (!$c->fname->use_content_profile) {
-    $edit[$c->fname->field] = ucfirst($edit[$c->fname->field]);
+    $edit[$c->fname->field] = drupal_ucfirst($edit[$c->fname->field]);
   }
   else {
-    $edit[$c->fname->field][0]['value'] = ucfirst($edit[$c->fname->field][0]['value']);
+    $edit[$c->fname->field][0]['value'] = drupal_ucfirst($edit[$c->fname->field][0]['value']);
   }
   if (!empty($c->mname->field)) {
     if (!$c->mname->use_content_profile) {
-      $edit[$c->mname->field] = ucfirst($edit[$c->mname->field]);
+      $edit[$c->mname->field] = drupal_ucfirst($edit[$c->mname->field]);
     }
     else {
-      $edit[$c->mname->field][0]['value'] = ucfirst($edit[$c->mname->field][0]['value']);
+      $edit[$c->mname->field][0]['value'] = drupal_ucfirst($edit[$c->mname->field][0]['value']);
     }
   }
   if (!$c->lname->use_content_profile) {
-    $edit[$c->lname->field] = ucfirst($edit[$c->lname->field]);
+    $edit[$c->lname->field] = drupal_ucfirst($edit[$c->lname->field]);
   }
   else {
-    $edit[$c->lname->field][0]['value'] = ucfirst($edit[$c->lname->field][0]['value']);
+    $edit[$c->lname->field][0]['value'] = drupal_ucfirst($edit[$c->lname->field][0]['value']);
   }
 }
 
