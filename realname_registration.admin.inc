@@ -180,7 +180,7 @@ function realname_registration_settings_form() {
       t('First name and last name without spaces (e.g., JohnSmith)'),
       t('First name, middle name, and last name without spaces (e.g., JohnJacobSmith)'),
       t('First name, middle initial, and last name without spaces (e.g., JohnJSmith)'),
-      t('Last name and first name without spaces (e.g., SmithJohn)')
+      t('Last name and first name without spaces (e.g., SmithJohn)'),
       t('First name and last initial without spaces (e.g., JohnS)')
     ),
     '#required' => TRUE,

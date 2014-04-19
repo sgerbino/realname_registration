@@ -7,15 +7,13 @@
  * required first name and last name fields on the registration form.
  */
 
-
 /*
- * Implementation of hook_enable().
+   TODO:
+   - provide internal functions which determine first, middle, and last names
+     to use
+   - provide internal function to generate username so that validation
+     functions can check username length
  */
-function realname_registration_enable() {
-  $success  = t('Realname registration has been enabled.') . ' ';
-  $success .= t('Please visit the') . ' <a href="config/people/realname_registration">' . t('configuration page') . '</a>.';
-  drupal_set_message($success, 'status');
-}
 
 /**
  * Implement hook_help().

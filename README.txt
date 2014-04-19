@@ -45,11 +45,13 @@ Higher priority:
  - show available field and profile type options as a dropdown box instead of
    making users type the machine name!
  - check for username length during form validation
+ - provide option to update existing usernames when names are updated
  - improve how strings with placeholders are translated
 
 Lower priority:
- - provide option to update existing usernames when names are updated, and an
-   action to bulk update existing usernames when realname_registration is
-   enabled or when its configuration has changed
+ - provide an action to bulk update existing usernames when
+   realname_registration is enabled or its configuration has changed
+ - handle multiple middle names
+ - integrate with the name module
  - handle the case where name fields are translated (do people really do this?)
 
