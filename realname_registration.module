@@ -128,7 +128,7 @@ function realname_registration_validate($form, &$form_state) {
   $fname = $c->fname->use_content_profile ?
     $form_state['content_profile_registration'][$c->fname->content_node]['node']->{$c->fname->field}[0]['value'] :
     $form_state['values'][$c->fname->field];
-  if (!preg_match('/^\pL+$/u', $fname)) {
+  if (!preg_match("/^[-\pL']*$/u", $fname)) {
     form_set_error($c->fname->field, t('First name may not contain symbols or numbers.'));
   }
 
@@ -137,7 +137,7 @@ function realname_registration_validate($form, &$form_state) {
     $mname = $c->mname->use_content_profile ?
       $form_state['content_profile_registration'][$c->mname->content_node]['node']->{$c->mname->field}[0]['value'] :
       $form_state['values'][$c->mname->field];
-    if (!preg_match('/^\pL+$/u', $mname)) {
+    if (!preg_match("/^[-\pL']*$/u", $mname)) {
       form_set_error($c->mname->field, t('Middle name may not contain symbols or numbers.'));
     }
   }
@@ -146,7 +146,7 @@ function realname_registration_validate($form, &$form_state) {
   $lname = $c->lname->use_content_profile ?
     $form_state['content_profile_registration'][$c->lname->content_node]['node']->{$c->lname->field}[0]['value'] :
     $form_state['values'][$c->lname->field];
-  if (!preg_match('/^\pL+$/u', $lname)) {
+  if (!preg_match("/^[-\pL']*$/u", $lname)) {
     form_set_error($c->lname->field, t('Last name may not contain symbols or numbers.'));
   }
 
@@ -163,101 +163,36 @@ function realname_registration_validate($form, &$form_state) {
 function realname_registration_mandatory_validate($form, &$form_state) {
   $c = realname_registration_load_settings();
 
-  /*
-   * A first name may not start or end with a space, and may not contain
-   * two consecutive spaces.
-   */
-  if (!$c->fname->use_content_profile) {
-    if (preg_match("/^\\s+(.*)$/", $form_state['values'][$c->fname->field])) {
-      form_set_error($c->fname->field, t('First name cannot begin with a space.'));
-    }
-    if (preg_match("/^(.*)\\s+$/", $form_state['values'][$c->fname->field])) {
-      form_set_error($c->fname->field, t('First name cannot end with a space.'));
-    }
-    if (preg_match("/\\s\\s/", $form_state['values'][$c->fname->field])) {
-      form_set_error($c->fname->field, t('First name cannot contain two spaces in a row.'));
-    }
+  // A first name may not contain symbols or numbers.
+  $fname = $c->fname->use_content_profile ?
+    $form_state['content_profile_registration'][$c->fname->content_node]['node']->{$c->fname->field}[0]['value'] :
+    $form_state['values'][$c->fname->field];
+  if ($err = user_validate_name($fname)) {
+    form_set_error($c->fname->field, $err);
+    drupal_set_message(t('Please supply a valid first name.'), 'error');
   }
-  else {
-    if (preg_match("/^\\s+(.*)$/",
-      $form_state['content_profile_registration'][$c->fname->content_node]['node']->{$c->fname->field}[0]['value'])) {
-      form_set_error($c->fname->field, t('First name cannot begin with a space.'));
-    }
-    if (preg_match("/^(.*)\\s+$/",
-      $form_state['content_profile_registration'][$c->fname->content_node]['node']->{$c->fname->field}[0]['value'])) {
-      form_set_error($c->fname->field, t('First name cannot end with a space.'));
-    }
-    if (preg_match("/\\s\\s/",
-      $form_state['content_profile_registration'][$c->fname->content_node]['node']->{$c->fname->field}[0]['value'])) {
-      form_set_error($c->fname->field, t('First name cannot contain two spaces in a row.'));
+
+  // A middle name may not contain symbols or numbers. This field is optional.
+  if ($c->mname->field) {
+    $mname = $c->mname->use_content_profile ?
+      $form_state['content_profile_registration'][$c->mname->content_node]['node']->{$c->mname->field}[0]['value'] :
+      $form_state['values'][$c->mname->field];
+    if ($err = user_validate_name($mname)) {
+      form_set_error($c->mname->field, $err);
+      drupal_set_message(t('Please supply a valid middle name.'), 'error');
     }
   }
 
-  /*
-   * A middle name may not start or end with a space, and may not contain
-   * two consecutive spaces.
-   */
-  if (!$c->mname->use_content_profile) {
-    if (!empty($form_state['values'][$c->mname->field])) {
-      if (preg_match("/^\\s+(.*)$/", $form_state['values'][$c->mname->field])) {
-        form_set_error($c->mname->field, t('Middle name cannot begin with a space.'));
-      }
-      if (preg_match("/^(.*)\\s+$/", $form_state['values'][$c->mname->field])) {
-        form_set_error($c->mname->field, t('Middle name cannot end with a space.'));
-      }
-      if (preg_match("/\\s\\s/", $form_state['values'][$c->mname->field])) {
-        form_set_error($c->mname->field, t('Middle name cannot contain two spaces in a row.'));
-      }
-    }
-  }
-  else {
-    if (!empty($form_state['content_profile_registration'][$c->mname->content_node]['node']->{$c->mname->field}[0]['value'])) {
-      if (preg_match("/^\\s+(.*)$/",
-        $form_state['content_profile_registration'][$c->mname->content_node]['node']->{$c->mname->field}[0]['value'])) {
-        form_set_error($c->mname->field, t('Middle name cannot begin with a space.'));
-      }
-      if (preg_match("/^(.*)\\s+$/",
-        $form_state['content_profile_registration'][$c->mname->content_node]['node']->{$c->mname->field}[0]['value'])) {
-        form_set_error($c->mname->field, t('Middle name cannot end with a space.'));
-      }
-      if (preg_match("/\\s\\s/",
-        $form_state['content_profile_registration'][$c->mname->content_node]['node']->{$c->mname->field}[0]['value'])) {
-        form_set_error($c->mname->field, t('Middle name cannot contain two spaces in a row.'));
-      }
-    }
+  // A last name may not contain symbols or numbers.
+  $lname = $c->lname->use_content_profile ?
+    $form_state['content_profile_registration'][$c->lname->content_node]['node']->{$c->lname->field}[0]['value'] :
+    $form_state['values'][$c->lname->field];
+  if ($err = user_validate_name($lname)) {
+    form_set_error($c->lname->field, $err);
+    drupal_set_message(t('Please supply a valid last name.'), 'error');
   }
 
-  /*
-   * A last name may not start or end with a space, and may not contain
-   * two consecutive spaces.
-   */
-  if (!$c->lname->use_content_profile) {
-    if (preg_match("/^\\s+(.*)$/", $form_state['values'][$c->lname->field])) {
-      form_set_error($c->lname->field, t('Last name cannot begin with a space.'));
-    }
-    if (preg_match("/^(.*)\\s+$/", $form_state['values'][$c->lname->field])) {
-      form_set_error($c->lname->field, t('Last name cannot end with a space.'));
-    }
-    if (preg_match("/\\s\\s/", $form_state['values'][$c->lname->field])) {
-      form_set_error($c->lname->field, t('Last name cannot contain two spaces in a row.'));
-    }
-  }
-  else {
-    if (preg_match("/^\\s+(.*)$/",
-      $form_state['content_profile_registration'][$c->lname->content_node]['node']->{$c->lname->field}[0]['value'])) {
-      form_set_error($c->lname->field, t('Last name cannot begin with a space.'));
-    }
-    if (preg_match("/^(.*)\\s+$/",
-      $form_state['content_profile_registration'][$c->lname->content_node]['node']->{$c->lname->field}[0]['value'])) {
-      form_set_error($c->lname->field, t('Last name cannot end with a space.'));
-    }
-    if (preg_match("/\\s\\s/",
-      $form_state['content_profile_registration'][$c->lname->content_node]['node']->{$c->lname->field}[0]['value'])) {
-      form_set_error($c->lname->field, t('Last name cannot contain two spaces in a row.'));
-    }
-  }
 }
-
 
 /**
  * Implementation of hook_menu().
