@@ -26,7 +26,7 @@ function realname_registration_settings_form() {
   $field_req = '
 <ul>
   <li>' . t('The field name is correct and represents an existing field') . '</li>
-  <li>' . t('The field is associated with the') . ' <em>' . t('user or profile2') . '</em> ' . t('entity') . '</li>
+  <li>' . t('The field is associated with the %type entity', array('%type' => 'user or profile2')) . '</li>
   <li>' . t('The field is required and displays on the registration form') . '</li>
 </ul>
 ';
@@ -90,7 +90,7 @@ function realname_registration_settings_form() {
       t('The name of your middle name field. Ensure that:')
       . '<ul>'
       . '<li>' . t('The field name is correct and represents an existing field') . '</li>'
-      . '<li>' . t('The field is associated with the') . ' <em>' . t('user') . '</em> ' . t('entity') . '</li>'
+      . '<li>' . t('The field is associated with the %type entity', array('%type' => 'user')) . '</li>'
       . '</ul>',
   );
 
@@ -207,7 +207,7 @@ function realname_registration_settings_validate($form, &$form_state) {
   $err_req          = '</em>, ' . t("you've provided must be required.");
   $err_unknown      = '</em>, ' . t("you've provided either does not exist or is not associated with the corresponding entity.");
   $err_textfield    = '</em>, ' . t("must use textfield widget.");
-  $err_register     = '</em>, ' . t("must be displayed on the registration form.") . '<em>';
+  $err_register     = '</em>, ' . t("must be displayed on the registration form.");
   $err_profile2_req = t("You must specify a profile2 machine name for the field,") . ' <em>';
 
   // If we are told to use profile2 fields to store values, we need to know which profile2 type.
