@@ -38,9 +38,18 @@ The "Create new account" form at /user/register and the "Add user" form at
 username field.  The username will be determined automatically based on the
 rules selected on this module's configuration page.
 
-TODO:
+TODO
+====
+
+Higher priority:
  - show available field and profile type options as a dropdown box instead of
    making users type the machine name!
+ - check for username length during form validation
  - improve how strings with placeholders are translated
+
+Lower priority:
+ - provide option to update existing usernames when names are updated, and an
+   action to bulk update existing usernames when realname_registration is
+   enabled or when its configuration has changed
  - handle the case where name fields are translated (do people really do this?)
 

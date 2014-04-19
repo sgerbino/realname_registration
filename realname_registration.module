@@ -315,6 +315,13 @@ function realname_registration_user_presave(&$edit, $account, $category) {
         $username = drupal_strtolower($username);
       }
 
+      // Make sure username is at least 3 characters less than the maximum
+      // length in the database schema to allow for adding digits in case of
+      // duplicates
+      if (drupal_strlen($username) > USERNAME_MAX_LENGTH - 3) {
+        $username = drupal_substr($username, 0, USERNAME_MAX_LENGTH - 3);
+      }
+
       // Check if the username already exists in the database.
       $result = db_query("SELECT name FROM {users} WHERE name = :username", array(':username' => $username));
 
@@ -327,6 +334,7 @@ function realname_registration_user_presave(&$edit, $account, $category) {
         }
       }
       $edit['name'] = $username;
+
     }
   }
 }
@@ -349,7 +357,7 @@ function realname_registration_validate($form, &$form_state) {
     else {
       $firstname = $form_state['values'][$firstname_field][LANGUAGE_NONE][0]['value'];
     }
-    if (!preg_match('/^\pL*$/u', $firstname)) {
+    if (!preg_match("/^[-\pL']*$/u", $firstname)) {
       form_set_error($firstname_field, t('First name may not contain symbols or numbers.'));
     }
   }
@@ -364,7 +372,7 @@ function realname_registration_validate($form, &$form_state) {
     else {
       $middlename = $form_state['values'][$middlename_field][LANGUAGE_NONE][0]['value'];
     }
-    if (!preg_match('/^\pL*$/u', $middlename)) {
+    if (!preg_match("/^[-\pL']*$/u", $middlename)) {
       form_set_error($middlename_field, t('First name may not contain symbols or numbers.'));
     }
   }
@@ -379,7 +387,7 @@ function realname_registration_validate($form, &$form_state) {
     else {
       $lastname = $form_state['values'][$lastname_field][LANGUAGE_NONE][0]['value'];
     }
-    if (!preg_match('/^\pL*$/u', $lastname)) {
+    if (!preg_match("/^[-\pL']*$/u", $lastname)) {
       form_set_error($lastname_field, t('Last name may not contain symbols or numbers.'));
     }
   }
@@ -393,93 +401,55 @@ function realname_registration_validate($form, &$form_state) {
  * @see user_register_submit()
  */
 function realname_registration_mandatory_validate($form, &$form_state) {
-  // A first name may not begin or end with a space.
-  $firstname_field = variable_get('realname_registration_firstname_field');
-  if (variable_get('realname_registration_use_profile2_firstname_field')) {
-    if (preg_match("/^\\s+(.*)$/", $form_state['input']['profile_'
-      . variable_get('realname_registration_profile2_firstname_field_profile_name') ][$firstname_field][LANGUAGE_NONE][0]['value'])) {
-      form_set_error($firstname_field, t('First name cannot begin with a space.'));
+
+  // Verify the syntax of the first name using core's validation function.
+  $firstname_field = variable_get('realname_registration_firstname_field', FALSE);
+  if ($firstname_field) {
+    $firstname = '';
+    if (variable_get('realname_registration_use_profile2_firstname_field')) {
+      $firstname = $form_state['input']['profile_' . variable_get('realname_registration_profile2_firstname_field_profile_name') ][$firstname_field][LANGUAGE_NONE][0]['value'];
     }
-    if (preg_match("/^(.*)\\s+$/", $form_state['input']['profile_'
-      . variable_get('realname_registration_profile2_firstname_field_profile_name') ][$firstname_field][LANGUAGE_NONE][0]['value'])) {
-      form_set_error($firstname_field, t('First name cannot end with a space.'));
+    else {
+      $firstname = $form_state['values'][$firstname_field][LANGUAGE_NONE][0]['value'];
     }
-    if (preg_match("/\\s\\s/", $form_state['input']['profile_'
-      . variable_get('realname_registration_profile2_firstname_field_profile_name') ][$firstname_field][LANGUAGE_NONE][0]['value'])) {
-      form_set_error($firstname_field, t('First name cannot contain two spaces in a row.'));
-    }
-  }
-  else {
-    if (preg_match("/^\\s+(.*)$/", $form_state['values'][$firstname_field][LANGUAGE_NONE][0]['value'])) {
-      form_set_error($firstname_field, t('First name cannot begin with a space.'));
-    }
-    if (preg_match("/^(.*)\\s+$/", $form_state['values'][$firstname_field][LANGUAGE_NONE][0]['value'])) {
-      form_set_error($firstname_field, t('First name cannot end with a space.'));
-    }
-    if (preg_match("/\\s\\s/", $form_state['values'][$firstname_field][LANGUAGE_NONE][0]['value'])) {
-      form_set_error($firstname_field, t('First name cannot contain two spaces in a row.'));
+    if ($err = user_validate_name($firstname)) {
+      form_set_error($firstname_field, $err);
+      drupal_set_message(t('Please supply a valid first name.'), 'error');
     }
   }
 
-  // A middle name may not begin or end with a space.
-  $middlename_field = variable_get('realname_registration_middlename_field');
-  if (variable_get('realname_registration_use_profile2_middlename_field')) {
-    if (!empty($form_state['input']['profile_' . variable_get('realname_registration_profile2_middlename_field_profile_name') ][$middlename_field][LANGUAGE_NONE][0]['value'])) {
-      if (preg_match("/^\\s+(.*)$/", $form_state['input']['profile_'
-        . variable_get('realname_registration_profile2_middlename_field_profile_name') ][$middlename_field][LANGUAGE_NONE][0]['value'])) {
-        form_set_error($middlename_field, t('Middle name cannot begin with a space.'));
-      }
-      if (preg_match("/^(.*)\\s+$/", $form_state['input']['profile_'
-        . variable_get('realname_registration_profile2_middlename_field_profile_name') ][$middlename_field][LANGUAGE_NONE][0]['value'])) {
-        form_set_error($middlename_field, t('Middle name cannot end with a space.'));
-      }
-      if (preg_match("/\\s\\s/", $form_state['input']['profile_'
-        . variable_get('realname_registration_profile2_middlename_field_profile_name') ][$middlename_field][LANGUAGE_NONE][0]['value'])) {
-        form_set_error($middlename_field, t('Middle name cannot contain two spaces in a row.'));
-      }
+  // Verify the syntax of the middle name using core's validation function.
+  $middlename_field = variable_get('realname_registration_middlename_field', FALSE);
+  if ($middlename_field) {
+    $middlename = '';
+    if (variable_get('realname_registration_use_profile2_middlename_field')) {
+      $middlename = $form_state['input']['profile_' . variable_get('realname_registration_profile2_middlename_field_profile_name') ][$middlename_field][LANGUAGE_NONE][0]['value'];
     }
-  }
-  else {
-    if (!empty($form_state['values'][$middlename_field][LANGUAGE_NONE][0]['value'])) {
-      if (preg_match("/^\\s+(.*)$/", $form_state['values'][$middlename_field][LANGUAGE_NONE][0]['value'])) {
-        form_set_error($middlename_field, t('Middle name cannot begin with a space.'));
-      }
-      if (preg_match("/^(.*)\\s+$/", $form_state['values'][$middlename_field][LANGUAGE_NONE][0]['value'])) {
-        form_set_error($middlename_field, t('Middle name cannot end with a space.'));
-      }
-      if (preg_match("/\\s\\s/", $form_state['values'][$middlename_field][LANGUAGE_NONE][0]['value'])) {
-        form_set_error($middlename_field, t('Middle name cannot contain two spaces in a row.'));
-      }
+    else {
+      $middlename = $form_state['values'][$middlename_field][LANGUAGE_NONE][0]['value'];
+    }
+    if ($err = user_validate_name($middlename)) {
+      form_set_error($middlename_field, $err);
+      drupal_set_message(t('Please supply a valid middle name.'), 'error');
     }
   }
 
-  // A last name may not begin or end with a space.
-  $lastname_field = variable_get('realname_registration_lastname_field');
-  if (variable_get('realname_registration_use_profile2_lastname_field')) {
-    if (preg_match("/^\\s+(.*)$/", $form_state['input']['profile_'
-      . variable_get('realname_registration_profile2_lastname_field_profile_name') ][$lastname_field][LANGUAGE_NONE][0]['value'])) {
-      form_set_error($lastname_field, t('Last name cannot begin with a space.'));
+  // Verify the syntax of the last name using core's validation function.
+  $lastname_field = variable_get('realname_registration_lastname_field', FALSE);
+  if ($lastname_field) {
+    $lastname = '';
+    if (variable_get('realname_registration_use_profile2_lastname_field')) {
+      $lastname = $form_state['input']['profile_' . variable_get('realname_registration_profile2_lastname_field_profile_name') ][$lastname_field][LANGUAGE_NONE][0]['value'];
     }
-    if (preg_match("/^(.*)\\s+$/", $form_state['input']['profile_'
-      . variable_get('realname_registration_profile2_lastname_field_profile_name') ][$lastname_field][LANGUAGE_NONE][0]['value'])) {
-      form_set_error($lastname_field, t('Last name cannot end with a space.'));
+    else {
+      $lastname = $form_state['values'][$lastname_field][LANGUAGE_NONE][0]['value'];
     }
-    if (preg_match("/\\s\\s/", $form_state['input']['profile_'
-      . variable_get('realname_registration_profile2_lastname_field_profile_name') ][$lastname_field][LANGUAGE_NONE][0]['value'])) {
-      form_set_error($lastname_field, t('Last name cannot contain two spaces in a row.'));
-    }
-  }
-  else {
-    if (preg_match("/^\\s+(.*)$/", $form_state['values'][$lastname_field][LANGUAGE_NONE][0]['value'])) {
-      form_set_error($lastname_field, t('Last name cannot begin with a space.'));
-    }
-    if (preg_match("/^(.*)\\s+$/", $form_state['values'][$lastname_field][LANGUAGE_NONE][0]['value'])) {
-      form_set_error($lastname_field, t('Last name cannot end with a space.'));
-    }
-    if (preg_match("/\\s\\s/", $form_state['values'][$lastname_field][LANGUAGE_NONE][0]['value'])) {
-      form_set_error($lastname_field, t('Last name cannot contain two spaces in a row.'));
+    if ($err = user_validate_name($lastname)) {
+      form_set_error($lastname_field, $err);
+      drupal_set_message(t('Please supply a valid last name.'), 'error');
     }
   }
+
 }
 
 /**
