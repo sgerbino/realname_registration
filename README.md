@@ -1,49 +1,36 @@
-<h3>Project summary</h3>
+# Realname registration
 Create usernames based on a persons real name, and save those values as user fields.
 
 Tommy Lee Jones &rarr; TLJones
 
-The Realname registration module is a solution for forcing professional usernames that are based on a persons real name. The <em>Username</em> on the registration form is replaced with <em>First name</em>, <em>Middle name</em> (optional), and <em>Last name</em> 
+The Realname registration module is a solution for forcing professional usernames that are based on a persons real name. The _Username_ on the registration form is replaced with _First name_, _Middle name_ (optional), and _Last name_ 
 fields created and provided by the site builder. The first name, middle name, and last name are preserved in the defined fields, where it is later tokenized for further use.
-<h3>Module features</h3>
-<dl>
-<dt>Configurations</dt>
-<dd>
-<ul>
-<li>Use your pre-existing first, middle and last name fields</li>
-<li>A choice of username format</li>
-<li>Force the first letter of last name, middle name, and first name to be capitalized.</li>
-<li>Force the actual username to be lower case. <em>(This has no effect on the first, middle, and last name field values)</em>
-<li>Use regex to validate real names</li>
-</ul>
-<dt><strong>Integrations</strong><dt>
-<dd><ul>
-<li>Profile2 integration (<code>7.x-2.x</code>)</li>
-<li>Content profile integration (<code>6.x-2.x</code>)</li>
-</dd></ul>
-</dd>
-<dt><strong>Tokens</strong><dt>
-<dd>Realname registration provides the following tokens;
-<ul>
-  <li>First name &amp; first initial</li>
-  <li>Middle name &amp; middle initial</li>
-  <li>Last name &amp; last initial</li>
-</ul>
-</dd>
-</dl>
-<h3>Recommended modules</h3>
-<ul>
-<li><a href="http://drupal.org/project/profile2">Profile2</a>: Store users real names in profile2 entities, rather than the core profile module. (<code>7.x-2.x</code>)</li>
-<li><a href="http://drupal.org/project/content_profile">Content profile</a>: Store users real names in profile node, rather than the core profile module. (<code>6.x-2.x</code>)</li>
-<li><a href="http://drupal.org/project/realname">Realname</a>: Customize the output of usernames while keeping their login credentials based on their real name.</li>
-<li><a href="http://drupal.org/project/token">Token</a>: Utilize your users names and initials as tokens.</li>
-</ul>
-<h3>Getting involved</h3>
-<ul>
-<li>Test out development releases and post any bugs or feature requests in the <a href="http://drupal.org/project/issues/realname_registration?status=All&categories=All" target="_blank">issue queue</a></li>
-<li>Write a review for this module on <a href="http://drupalmodules.com/module/realname-registration" target="_blank">drupalmodules.com</a></li>
-<li>Help translate this module at <a href="http://localize.drupal.org/translate/projects/realname_registration" target="_blank">localize.drupal.org</a></li>
-</ul>
+## Module features
+
+## Configurations
+* Use your pre-existing first, middle and last name fields
+* A choice of username format
+* Force the first letter of last name, middle name, and first name to be capitalized.
+* Force the actual username to be lower case. _(This has no effect on the first, middle, and last name field values)_
+* Use regex to validate real names
+
+### Integrations
+* Profile2 integration (`7.x-2.x`)
+* Content profile integration (`6.x-2.x`)
+
+### Tokens
+Realname registration provides the following tokens;
+
+* First name &amp; first initial
+* Middle name &amp; middle initial
+* Last name &amp; last initial
+
+## Recommended modules
+
+* [Profile2](http://drupal.org/project/profile2): Store users real names in profile2 entities, rather than the core profile module. (`7.x-2.x`)
+* [Content profile](http://drupal.org/project/content_profile): Store users real names in profile node, rather than the core profile module. (`6.x-2.x`)
+* [Realname](http://drupal.org/project/realname): Customize the output of usernames while keeping their login credentials based on their real name.
+* [Token](http://drupal.org/project/token): Utilize your users names and initials as tokens.
 
 ## Installation
 To use this module, you will first need to add name fields to user profiles,
