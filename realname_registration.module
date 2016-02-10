@@ -389,7 +389,7 @@ function realname_registration_validate($form, &$form_state) {
     else {
       $firstname = $form_state['values'][$firstname_field][LANGUAGE_NONE][0]['value'];
     }
-    if (!preg_match("/^[-\pL']*$/u", $firstname)) {
+    if (!preg_match("/^[-\pL' ]*$/u", $firstname)) {
       form_set_error($firstname_field, t('First name may not contain symbols or numbers.'));
     }
   }
@@ -404,7 +404,7 @@ function realname_registration_validate($form, &$form_state) {
     else {
       $middlename = $form_state['values'][$middlename_field][LANGUAGE_NONE][0]['value'];
     }
-    if (!preg_match("/^[-\pL']*$/u", $middlename)) {
+    if (!preg_match("/^[-\pL' ]*$/u", $middlename)) {
       form_set_error($middlename_field, t('First name may not contain symbols or numbers.'));
     }
   }
@@ -419,7 +419,7 @@ function realname_registration_validate($form, &$form_state) {
     else {
       $lastname = $form_state['values'][$lastname_field][LANGUAGE_NONE][0]['value'];
     }
-    if (!preg_match("/^[-\pL']*$/u", $lastname)) {
+    if (!preg_match("/^[-\pL' ]*$/u", $lastname)) {
       form_set_error($lastname_field, t('Last name may not contain symbols or numbers.'));
     }
   }
