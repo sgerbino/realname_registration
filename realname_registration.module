@@ -334,10 +334,10 @@ function realname_registration_user_presave(&$edit, $account, $category) {
             $username = $edit[$firstname_field][LANGUAGE_NONE][0]['value'];
           }
           if (variable_get('realname_registration_use_profile2_lastname_field')) {
-            $username = drupal_substr($edit['profile_' . $lastname_type][$lastname_field][LANGUAGE_NONE][0]['value'], 0, 1);
+            $username .= drupal_substr($edit['profile_' . $lastname_type][$lastname_field][LANGUAGE_NONE][0]['value'], 0, 1);
           }
           else {
-            $username = drupal_substr($edit[$lastname_field][LANGUAGE_NONE][0]['value'], 0, 1);
+            $username .= drupal_substr($edit[$lastname_field][LANGUAGE_NONE][0]['value'], 0, 1);
           }
           break;
 
