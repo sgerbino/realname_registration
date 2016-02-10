@@ -460,7 +460,7 @@ function realname_registration_mandatory_validate($form, &$form_state) {
     else {
       $middlename = $form_state['values'][$middlename_field][LANGUAGE_NONE][0]['value'];
     }
-    if ($err = user_validate_name($middlename)) {
+    if ($middlename != '' && $err = user_validate_name($middlename)) {
       form_set_error($middlename_field, $err);
       drupal_set_message(t('Please supply a valid middle name.'), 'error');
     }
