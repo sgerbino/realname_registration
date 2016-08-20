@@ -1,3 +1,38 @@
+# Realname registration
+Create usernames based on a persons real name, and save those values as user fields.
+
+Tommy Lee Jones &rarr; TLJones
+
+The Realname registration module is a solution for forcing professional usernames that are based on a persons real name. The _Username_ on the registration form is replaced with _First name_, _Middle name_ (optional), and _Last name_ 
+fields created and provided by the site builder. The first name, middle name, and last name are preserved in the defined fields, where it is later tokenized for further use.
+## Module features
+
+## Configurations
+* Use your pre-existing first, middle and last name fields
+* A choice of username format
+* Force the first letter of last name, middle name, and first name to be capitalized.
+* Force the actual username to be lower case. _(This has no effect on the first, middle, and last name field values)_
+* Use regex to validate real names
+
+### Integrations
+* Profile2 integration (`7.x-2.x`)
+* Content profile integration (`6.x-2.x`)
+
+### Tokens
+Realname registration provides the following tokens;
+
+* First name &amp; first initial
+* Middle name &amp; middle initial
+* Last name &amp; last initial
+
+## Recommended modules
+
+* [Profile2](http://drupal.org/project/profile2): Store users real names in profile2 entities, rather than the core profile module. (`7.x-2.x`)
+* [Content profile](http://drupal.org/project/content_profile): Store users real names in profile node, rather than the core profile module. (`6.x-2.x`)
+* [Realname](http://drupal.org/project/realname): Customize the output of usernames while keeping their login credentials based on their real name.
+* [Token](http://drupal.org/project/token): Utilize your users names and initials as tokens.
+
+## Installation
 To use this module, you will first need to add name fields to user profiles,
 and then configure this module to use them to generate a Drupal user name (the
 internal "machine name"). Fields can be added using the contrib module
